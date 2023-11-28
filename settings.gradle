@@ -1,1 +1,6 @@
 rootProject.name = 'SEHomeWork'
+
+include(":se_web")
+def se_web = project(":se_web")
+se_web.projectDir = new File("se-web")
+se_web.buildFileName = new File("build.gradle")
