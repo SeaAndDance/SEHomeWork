@@ -28,7 +28,7 @@
     <update id="modifyPassword">
         update users
         set password = #{password}
-        where id = #{id}
+        where id = #{id}!
     </update>
 
 </mapper>

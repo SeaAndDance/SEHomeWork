@@ -1,8 +1,6 @@
 package io.github.FlyingASea.service;
 
-import io.github.FlyingASea.dao.DataMapper;
 import io.github.FlyingASea.dao.RoomMapper;
-import io.github.FlyingASea.entity.RoomData;
 import io.github.FlyingASea.entity.RoomEntity;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;

@@ -2,22 +2,26 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.github.FlyingASea.dao.DataMapper">
 
-    <resultMap id="RoomData" type="io.github.FlyingASea.entity.RoomData">
-        <result column="id" jdbcType="CHAR" property="id"/>
+    <resultMap id="RoomData" type="io.github.FlyingASea.entity.DataEntity">
+        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="room" jdbcType="VARCHAR" property="room"/>
         <result column="temperature" jdbcType="INTEGER" property="temperature"/>
         <result column="wind_speed" jdbcType="INTEGER" property="wind_speed"/>
         <result column="is_on" jdbcType="INTEGER" property="is_on"/>
         <result column="last_update" jdbcType="TIMESTAMP" property="last_update"/>
     </resultMap>
 
-    <select id="findDataById" resultType="io.github.FlyingASea.entity.RoomData">
+    <select id="findDataById" resultType="io.github.FlyingASea.entity.DataEntity">
         select *
         from Data
         where id = #{id}
     </select>
+
+
+
     <insert id="createData">
-        insert into Data (token, id, user, scope, expire)
-        values (#{token}, #{id}, #{user}, #{scope}, #{expire})
+        insert into Data (id, room, temperature, wind_speed, is_on, last_update)
+        values (#{id}, #{temperature}, #{wind_speed}, #{is_on}, #{last_update})
     </insert>
 
 
