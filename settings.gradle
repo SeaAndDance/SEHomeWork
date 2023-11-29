@@ -4,3 +4,8 @@ include(":se_web")
 def se_web = project(":se_web")
 se_web.projectDir = new File("se-web")
 se_web.buildFileName = new File("build.gradle")
+
+include(":se_client")
+def se_client = project(":se_client")
+se_client.projectDir = new File("se-client")
+se_client.buildFileName = new File("build.gradle")
