@@ -1,0 +1,506 @@
+openapi: 3.0.3
+
+info:
+  title: BUPT Software Engineering Homework Server-Frontend API
+  description: BUPT Software Engineering Homework Server-Frontend API
+  version: 1.0.0
+
+servers:
+  - url: 'http://localhost:11451/api'
+    description: Local server
+
+security:
+  - sessionAuth: [ ]
+
+paths:
+  /login:
+    post:
+      tags:
+        - Authorization
+      summary: Login as admin
+      parameters:
+        - in: query
+          name: no-csrf # If the server doesn't implement CSRF token, add this parameter to disable CSRF token
+          schema:
+            type: boolean
+          description: Disable CSRF token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: admin
+                password:
+                  type: string
+                  example: admin
+      responses:
+        '200':
+          description: Login successfully
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: session=abcde12345; Path=/
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                    example: admin
+                  csrf_token: # Optional: anti-CSRF token
+                    type: string
+                    example: abcde12345
+        '401':
+          description: Login failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+  /logout:
+    post:
+      tags:
+        - Authorization
+      security:
+        - sessionAuth: [ ]
+      parameters:
+        - in: header
+          name: X-CSRF-Token
+          schema:
+            type: string
+            example: abcde12345 # Optional: anti-CSRF token
+          description: CSRF token
+      summary: Logout
+      responses:
+        '204':
+          description: Logout successfully
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: session=; Path=/
+        '401':
+          description: Not logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+  /admin/device:
+    put:
+      tags:
+        - Administrate
+      summary: Add device
+      security:
+        - sessionAuth: [ ]
+      parameters:
+        - in: header
+          name: X-CSRF-Token
+          schema:
+            type: string
+            example: abcde12345 # Optional: anti-CSRF token
+          description: CSRF token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                room:
+                  type: string
+                  example: 2-233
+                public_key:
+                  type: string # RSA 4096
+      responses:
+        '200':
+          description: Add device successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  room:
+                    type: string
+                    example: 2-233 # same as the input
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+    delete:
+      tags:
+        - Administrate
+      summary: Remove device
+      security:
+        - sessionAuth: [ ]
+      parameters:
+        - in: header
+          name: X-CSRF-Token
+          schema:
+            type: string
+            example: abcde12345 # Optional: anti-CSRF token
+          description: CSRF token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                room:
+                  type: string
+                  example: 2-233
+      responses:
+        '200':
+          description: Remove device successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  room:
+                    type: string
+                    example: 2-233 # same as the input
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+  /admin/devices:
+    get:
+      tags:
+        - Administrate
+      summary: Get all available devices
+      security:
+        - sessionAuth: [ ]
+      parameters:
+        - in: header
+          name: X-CSRF-Token
+          schema:
+            type: string
+            example: abcde12345 # Optional: anti-CSRF token
+          description: CSRF token
+      responses:
+        '200':
+          description: Get devices successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: 2-233
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+  /admin/device/{room_id}:
+    post:
+      tags:
+        - Administrate
+      summary: Control device
+      security:
+        - sessionAuth: [ ]
+      parameters:
+        - in: path
+          name: room_id
+          schema:
+            type: string
+            example: 2-233
+          required: true
+          description: Room ID
+        - in: header
+          name: X-CSRF-Token
+          schema:
+            type: string
+            example: abcde12345 # Optional: anti-CSRF token
+          description: CSRF token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/request_entry'
+      responses:
+        '200':
+          description: Control successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+                  example: 2-233
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+  /status/{room_id}:
+    get:
+      tags:
+        - Data Query
+      summary: Get status of a device
+      security:
+        - sessionAuth: [ ]
+      parameters:
+        - in: path
+          name: room_id
+          schema:
+            type: string
+            example: 2-233
+          required: true
+          description: Room ID
+        - in: header
+          name: X-CSRF-Token
+          schema:
+            type: string
+            example: abcde12345 # Optional: anti-CSRF token
+          description: CSRF token
+      responses:
+        '200':
+          description: Get status successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  room:
+                    type: string
+                    example: 2-233
+                    required: true
+                  temperature:
+                    type: integer
+                    example: 26
+                    required: true
+                  wind_speed:
+                    type: integer
+                    example: 3
+                    required: true
+                  mode:
+                    type: string
+                    example: cold
+                    required: true
+                  sweep:
+                    type: boolean
+                    example: true
+                    required: true
+                  is_on:
+                    type: boolean
+                    example: true
+                    required: true
+                  last_update:
+                    type: string
+                    example: 2023-09-18T11:45:14+08:00 # ISO 8601
+                    required: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+  /status:
+    get:
+      tags:
+        - Data Query
+      summary: Get status of all devices
+      security:
+        - sessionAuth: [ ]
+      parameters:
+        - in: header
+          name: X-CSRF-Token
+          schema:
+            type: string
+            example: abcde12345 # Optional: anti-CSRF token
+          description: CSRF token
+      responses:
+        '200':
+          description: Get status successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    room:
+                      type: string
+                      example: 2-233
+                    is_on:
+                      type: boolean
+                      example: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+  /room/check_in:
+    post:
+      tags:
+        - Room
+      summary: Check-in a room
+      security:
+        - sessionAuth: [ ]
+      parameters:
+        - in: header
+          name: X-CSRF-Token
+          schema:
+            type: string
+            example: abcde12345 # Optional: anti-CSRF token
+          description: CSRF token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                room:
+                  type: string
+                  example: 2-233
+                  required: true
+      responses:
+        '200':
+          description: Check-in successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  room:
+                    type: string
+                    example: 2-233 # same as the input
+                    required: true
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+  /room/check_out:
+    post:
+      tags:
+        - Room
+      summary: Check-out a room
+      security:
+        - sessionAuth: [ ]
+      parameters:
+        - in: header
+          name: X-CSRF-Token
+          schema:
+            type: string
+            example: abcde12345 # Optional: anti-CSRF token
+          description: CSRF token
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                room:
+                  type: string
+                  example: 2-233
+                  required: true
+      responses:
+        '200':
+          description: Check-out successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  room:
+                    type: string
+                    example: 2-233 # same as the input
+                    required: true
+                  report:
+                    $ref: '#/components/schemas/report_data'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+components:
+  securitySchemes:
+    sessionAuth:
+      type: apiKey
+      in: cookie # Optional: use CSRF token, header = X-CSRF-Token
+      name: session
+  schemas:
+    error_response:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 100
+    request_entry:
+      type: object
+      properties:
+        operation:
+          type: string
+          example: start
+          # start, stop, temperature, wind_speed, mode, sweep
+          required: true
+        data:
+          type: string
+          example: 26
+          # different for operations
+          required: true
+    report_data:
+      type: object
+      properties:
+        total_cost:
+          type: integer
+          example: 114514
+        total_time:
+          type: integer
+          example: 1919810
+        details:
+          type: array
+          items:
+            - type: object
+              properties:
+                start_time:
+                  type: string
+                  example: 2023-09-18T11:45:14+08:00 # ISO 8601
+                  required: true
+                end_time:
+                  type: string
+                  example: 2023-09-19T11:45:14+08:00 # ISO 8601
+                  required: true
+                temperature:
+                  type: integer
+                  example: 26
+                  required: true
+                wind_speed:
+                  type: integer
+                  example: 3
+                  required: true
+                mode:
+                  type: string
+                  example: cold
+                  required: true
+                sweep:
+                  type: boolean
+                  example: true
+                  required: true
+                duration:
+                  type: integer
+                  example: 86400 # seconds
+                  required: true
+                cost:
+                  type: integer
+                  example: 114514
+                  required: true

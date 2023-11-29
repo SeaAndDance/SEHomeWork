@@ -15,4 +15,7 @@
 		delete from Room where id = #{id}
 	</delete>
 
+	<select id="findRoomById" resultType="io.github.FlyingASea.entity.RoomEntity">
+		select * from Room where id = #{id}
+	</select>
 </mapper>

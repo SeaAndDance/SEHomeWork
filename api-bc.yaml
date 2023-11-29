@@ -1,0 +1,149 @@
+openapi: 3.0.3
+
+info:
+  title: BUPT Software Engineering Homework Server-Client API
+  description: BUPT Software Engineering Homework Server-Client API
+  version: 1.0.0
+
+servers:
+  - url: 'http://localhost:11451/api'
+    description: Local Server
+  - url: 'http://{ip}:{port}/api'
+    description: Client WebHook
+    variables:
+      ip:
+        default: localhost
+        description: Client IP
+      port:
+        default: '11451'
+        description: Client WebHook port
+
+paths:
+  /device/client:
+    post:
+      tags:
+        - Client Operation
+      summary: Client Online
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                room_id:
+                  type: string
+                  example: 2-233
+                  required: true
+                port:
+                  type: string
+                  description: Port for WebHook
+                  required: true
+                unique_id:
+                  type: string
+                  example: 1145141919810abc # random Unique ID, 16 characters
+                  required: true
+                signature:
+                  type: string
+                  # SHA256withRSA, RSA 4096, sign text = room_id + unique_id + port
+                  required: true
+      responses:
+        '204':
+          description: Online successfully
+        '401':
+          description: Unsigned or signature mismatches
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+  /device/client/{room_id}:
+    post:
+      tags:
+        - Client Operation
+      summary: Client Operation Requests for AC
+      parameters:
+        - in: path
+          name: room_id
+          schema:
+            type: string
+            example: 2-233
+          required: true
+          description: Room ID
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/request_entry'
+      responses:
+        '204':
+          description: Operation Request successfully
+        '401':
+          description: Unsigned or signature mismatches
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+  /control:
+    post:
+      tags:
+        - Server Operation
+      summary: Server Operations for AC
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object # data needs encryption with client public key, named 'data'
+              properties:
+                operation:
+                  type: string
+                  example: start
+                  # start, stop, temperature, wind_speed, mode, sweep
+                  required: true
+                data:
+                  type: string
+                  example: 26
+                  # different for operations
+                  required: true
+      responses:
+        '204':
+          description: Operation successfully
+        '401':
+          description: Unsigned or signature mismatches
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
+components:
+  schemas:
+    error_response:
+      type: object
+      properties:
+        error_code:
+          type: integer
+          example: 100
+    request_entry:
+      type: object
+      properties:
+        operation:
+          type: string
+          example: start
+          # start_temperature_wind_speed, stop, temperature_39, wind_speed_2, start_25_1
+          required: true
+        data:
+          type: string
+          example: 26
+          # different for operations
+        time:
+          type: string
+          example: 2023-09-18T11:45:14+08:00 # ISO 8601
+          required: true
+        unique_id:
+          type: string
+          example: 1145141919810abc # random Unique ID, 16 characters
+          required: true
+        signature:
+          type: string
+          # SHA256withRSA, RSA 4096, sign text = operation + unique_id + data + time
+          required: true

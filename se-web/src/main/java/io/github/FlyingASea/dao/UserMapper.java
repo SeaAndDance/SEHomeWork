@@ -8,7 +8,7 @@ import org.apache.ibatis.annotations.Param;
 public interface UserMapper {
     UserEntity findUserById(@Param("id") String id);
 
-    void createUser(@Param("id") String id, @Param("name") String name, @Param("password") String password);
+    void createUser(@Param("id") int id, @Param("name") String name, @Param("password") String password);
 
     void modifyName(@Param("id") String id, @Param("name") String name);
 
