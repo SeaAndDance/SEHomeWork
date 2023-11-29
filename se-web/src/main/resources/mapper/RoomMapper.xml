@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.github.FlyingASea.dao.RoomMapper">
+	<resultMap id="Room" type="io.github.FlyingASea.entity.RoomEntity">
+		<result column="id" jdbcType="VARCHAR" property="id"/>
+		<result column="public_key" jdbcType="VARCHAR" property="public_key"/>
+	</resultMap>
+
+	<insert id="createRoom">
+		insert into Room (id, public_key)
+		values (#{id}, #{public_key})
+	</insert>
+
+	<delete id="delRoomById">
+		delete from Room where id = #{id}
+	</delete>
+
+</mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="io.github.FlyingASea.dao.DataMapper">
+
+    <resultMap id="RoomData" type="io.github.FlyingASea.entity.RoomData">
+        <result column="id" jdbcType="CHAR" property="id"/>
+        <result column="temperature" jdbcType="INTEGER" property="temperature"/>
+        <result column="wind_speed" jdbcType="INTEGER" property="wind_speed"/>
+        <result column="is_on" jdbcType="INTEGER" property="is_on"/>
+        <result column="last_update" jdbcType="TIMESTAMP" property="last_update"/>
+    </resultMap>
+
+    <select id="findDataById" resultType="io.github.FlyingASea.entity.RoomData">
+        select *
+        from Data
+        where id = #{id}
+    </select>
+    <insert id="createData">
+        insert into Data (token, id, user, scope, expire)
+        values (#{token}, #{id}, #{user}, #{scope}, #{expire})
+    </insert>
+
+
+</mapper>
