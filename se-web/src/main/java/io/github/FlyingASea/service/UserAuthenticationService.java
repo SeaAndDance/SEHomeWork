@@ -6,6 +6,8 @@ import jakarta.annotation.Resource;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+
 @Service("UserAuthenticationService")
 public class UserAuthenticationService {
 
@@ -36,6 +38,15 @@ public class UserAuthenticationService {
 
     public void newUser(int id, String name, String password) {
         userRepository.createUser(id, name, passwordEncoded(password));
+    }
+
+    public boolean changePassword(UserEntity entity, String password) {
+        if (isInvalidPassword(password))
+            return false;
+        String newPass = passwordEncoded(password);
+        userRepository.modifyPassword(entity.getId(), newPass);
+        entity.setPassword(newPass);
+        return true;
     }
 
 }

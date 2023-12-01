@@ -56,12 +56,20 @@ public class DataService {
         }
 
         try {
-            dataRepository.createData(/*脑子木了，明天再写吧*/,id, Integer.parseInt(data.get("temperature")), Integer.parseInt(data.get("wind_speed")),
+            dataRepository.createData(,id, Integer.parseInt(data.get("temperature")), Integer.parseInt(data.get("wind_speed")),
                     Integer.parseInt(data.get("is_on")), last_update);
             return new Pair<>("unique_id", data.get("unique_id"));
         } catch (Exception e) {
             return null;
         }
+
+    }
+
+    public void checkInRoom(){
+
+    }
+
+    public void checkOutRoom(){
 
     }
 

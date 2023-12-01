@@ -14,12 +14,12 @@
     <select id="findDataById" resultType="io.github.FlyingASea.entity.DataEntity">
         select *
         from Data
-        where id = #{id}
+        where room = #{room}
     </select>
 
 
 
-    <insert id="createData">
+    <insert id="createData" useGeneratedKeys="true" keyProperty="id">
         insert into Data (id, room, temperature, wind_speed, is_on, last_update)
         values (#{id}, #{temperature}, #{wind_speed}, #{is_on}, #{last_update})
     </insert>
