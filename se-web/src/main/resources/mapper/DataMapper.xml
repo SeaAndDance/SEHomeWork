@@ -21,7 +21,7 @@
 
     <insert id="createData" useGeneratedKeys="true" keyProperty="id">
         insert into Data (id, room, temperature, wind_speed, is_on, last_update)
-        values (#{id}, #{temperature}, #{wind_speed}, #{is_on}, #{last_update})
+        values (#{id}, #{room}, #{temperature}, #{wind_speed}, #{is_on}, #{last_update})
     </insert>
 
 

@@ -42,4 +42,5 @@ out/
 **/server/
 **/node_modules
 **/build
+**/src/main/resources/db/
 gen/

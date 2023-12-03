@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:sqlite:data.db
+    url: jdbc:sqlite:D:/IdeaProjects/2023-SE-HomeWork/se-web/src/main/resources/db/data.db
     driver-class-name: org.sqlite.JDBC
   web:
     resources:
@@ -28,9 +28,13 @@ server:
 #    key-alias: tomcat
 
 mybatis:
-  mapper-locations: classpath:mybatis/mapper/*Mapper.xml
-  config-location: classpath:mybatis-config.xml
+  mapper-locations: classpath:mapper/*Mapper.xml
 
 logging:
   level:
     io.github.nickid2018.ipgs.dao: debug
+
+security:
+  basic:
+    enabled: false
+

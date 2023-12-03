@@ -2,7 +2,11 @@ package io.github.FlyingASea.service;
 
 import io.github.FlyingASea.dao.UserMapper;
 import io.github.FlyingASea.entity.UserEntity;
+import io.github.FlyingASea.util.Pair;
+import io.github.FlyingASea.util.RandomUtils;
 import jakarta.annotation.Resource;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +20,16 @@ public class UserAuthenticationService {
 
     @Resource
     private UserMapper userRepository;
+
+    @Cacheable(key = "#id + ':'", value = "userSession#604800")
+    public String createOrGetSession(String id) {
+        return RandomUtils.randomString();
+    }
+
+    @CachePut(key = "#id + ':'", value = "userSession#604800")
+    public String createSession(String id) {
+        return RandomUtils.randomString();
+    }
 
     private static final BCryptPasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder(10);
 
@@ -36,7 +50,7 @@ public class UserAuthenticationService {
         return PASSWORD_ENCODER.encode(password);
     }
 
-    public void newUser(int id, String name, String password) {
+    public void newUser(String id, String name, String password) {
         userRepository.createUser(id, name, passwordEncoded(password));
     }
 
@@ -48,5 +62,4 @@ public class UserAuthenticationService {
         entity.setPassword(newPass);
         return true;
     }
-
 }

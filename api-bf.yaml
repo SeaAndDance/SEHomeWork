@@ -13,6 +13,45 @@ security:
   - sessionAuth: [ ]
 
 paths:
+  /register:
+    post:
+      tags:
+        - Authorization
+      summary: Register as user
+      parameters:
+        - in: query
+          name: no-csrf # If the server doesn't implement CSRF token, add this parameter to disable CSRF token
+          schema:
+            type: boolean
+          description: Disable CSRF token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: admin
+                password:
+                  type: string
+                  example: admin
+      responses:
+        '200':
+          description: Login successfully
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: session=abcde12345; Path=/
+        '401':
+          description: Login failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/error_response'
+
   /login:
     post:
       tags:

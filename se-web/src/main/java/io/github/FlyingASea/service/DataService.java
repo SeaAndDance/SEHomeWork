@@ -16,21 +16,15 @@ public class DataService {
     private DataMapper dataRepository;
 
     @Resource
-    private StateEntity stateEntity;
-
-    @Resource
-    private RoomService roomService;
-
-    @Resource
     private StateMapper stateRepository;
 
-    private void convert(Map<String, String> data) {
-        stateEntity.setId(data.get("id"));
-        stateEntity.setTemperature(Integer.parseInt(data.get("temperature")));
-        stateEntity.setWind_speed(Integer.parseInt(data.get("wind_speed")));
-        stateEntity.setIs_on(Integer.parseInt(data.get("is_on")));
-        stateEntity.setLast_update(Timestamp.valueOf(data.get("last_update")));
-    }
+//    private void convert(Map<String, String> data) {
+//        stateEntity.setId(data.get("id"));
+//        stateEntity.setTemperature(Integer.parseInt(data.get("temperature")));
+//        stateEntity.setWind_speed(Integer.parseInt(data.get("wind_speed")));
+//        stateEntity.setIs_on(Integer.parseInt(data.get("is_on")));
+//        stateEntity.setLast_update(Timestamp.valueOf(data.get("last_update")));
+//    }
 
     public Pair<String, String> recordRoomData(Map<String, String> data) {
         String id = data.get("id");
@@ -56,7 +50,7 @@ public class DataService {
         }
 
         try {
-            dataRepository.createData(,id, Integer.parseInt(data.get("temperature")), Integer.parseInt(data.get("wind_speed")),
+            dataRepository.createData(Integer.parseInt(id),id, Integer.parseInt(data.get("temperature")), Integer.parseInt(data.get("wind_speed")),
                     Integer.parseInt(data.get("is_on")), last_update);
             return new Pair<>("unique_id", data.get("unique_id"));
         } catch (Exception e) {

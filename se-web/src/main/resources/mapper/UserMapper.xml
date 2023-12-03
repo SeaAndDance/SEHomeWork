@@ -3,15 +3,13 @@
 <mapper namespace="io.github.FlyingASea.dao.UserMapper">
 
     <resultMap id="User" type="io.github.FlyingASea.entity.UserEntity">
-        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="id" jdbcType="VARCHAR" property="id"/>
         <result column="name" jdbcType="VARCHAR" property="name"/>
         <result column="password" jdbcType="VARCHAR" property="password"/>
     </resultMap>
 
     <select id="findUserById" resultType="io.github.FlyingASea.entity.UserEntity">
-        select *
-        from users
-        where id = #{id}
+        select * from users where id = #{id}
     </select>
 
     <insert id="createUser">
@@ -28,7 +26,7 @@
     <update id="modifyPassword">
         update users
         set password = #{password}
-        where id = #{id}!
+        where id = #{id}
     </update>
 
 </mapper>
