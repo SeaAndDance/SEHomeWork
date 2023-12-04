@@ -1,10 +1,8 @@
 package io.github.FlyingASea.service;
 
 import io.github.FlyingASea.dao.DataMapper;
-import io.github.FlyingASea.dao.StateMapper;
 import io.github.FlyingASea.entity.DataEntity;
 import io.github.FlyingASea.entity.StateEntity;
-import io.github.FlyingASea.util.Pair;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
@@ -26,23 +24,12 @@ public class DataService {
 
 
     public void createState(String room, int temperature, int wind_speed, int is_on, Timestamp last_update) {
-        DataEntity dataEntity = new DataEntity();
-        dataEntity.setRoom(room);
-        dataEntity.setTemperature(temperature);
-        dataEntity.setWind_speed(wind_speed);
-        dataEntity.setIs_on(is_on);
-        dataEntity.setLast_update(last_update);
-        dataRepository.createData(dataEntity);
+        dataRepository.createData(last_update, room, temperature, wind_speed, is_on);
     }
 
     public void createState(StateEntity stateEntity) {
-        DataEntity dataEntity = new DataEntity();
-        dataEntity.setRoom(stateEntity.getId());
-        dataEntity.setTemperature(stateEntity.getTemperature());
-        dataEntity.setWind_speed(stateEntity.getWind_speed());
-        dataEntity.setIs_on(stateEntity.getIs_on());
-        dataEntity.setLast_update(stateEntity.getLast_update());
-        dataRepository.createData(dataEntity);
+        dataRepository.createData(stateEntity.getLast_update(), stateEntity.getId(), stateEntity.getTemperature()
+                , stateEntity.getWind_speed(), stateEntity.getIs_on());
     }
 
     public boolean createState(Map<String, Object> data) {
@@ -55,24 +42,30 @@ public class DataService {
             return false;
         if (room instanceof String && temperature instanceof Integer && wind_speed instanceof Integer &&
                 is_on instanceof Integer && last_update instanceof Timestamp) {
-            DataEntity dataEntity = new DataEntity();
-            dataEntity.setRoom((String) room);
-            dataEntity.setTemperature((int) temperature);
-            dataEntity.setWind_speed((int) wind_speed);
-            dataEntity.setIs_on((int) is_on);
-            dataEntity.setLast_update((Timestamp) last_update);
-            dataRepository.createData(dataEntity);
+            dataRepository.createData((Timestamp) last_update, (String) room,
+                    (int) temperature, (int) wind_speed, (int) is_on);
             return true;
         } else {
             return false;
         }
     }
 
-    public Map<String, Object> generateBill(String id, Timestamp begin) {
-        DataEntity[] datas = dataRepository.selectDatasFromDate(id, begin);
+    public Map<String, Object> generateBill(String id, StateEntity now) {
+
+        dataRepository.createData(now.getLast_update(), now.getId(),
+                now.getTemperature(), now.getWind_speed(), now.getIs_on());
+
+        DataEntity[] datas = dataRepository.selectDatasFromDate(id, now.getBegin());
+
+        for (DataEntity i : datas) {
+            System.out.println(i);
+        }
+
         long total_cost = 0L, total_time = 0L;
         Map<String, Object> report = new HashMap<>();
         List<Map<String, Object>> items = new ArrayList<>();
+
+        System.out.println(datas.length);
 
         for (int i = 0; i < datas.length - 1; i++) {
             Timestamp start = datas[i].getLast_update();
@@ -81,7 +74,7 @@ public class DataService {
             int wind_speed = datas[i].getWind_speed();
             int is_on = datas[i].getIs_on();
 
-            long duration = Duration.between(start.toInstant(), end.toInstant()).getSeconds();
+            long duration = Math.abs(Duration.between(end.toInstant(), start.toInstant()).getSeconds());
             long cost = 3 * temperature * wind_speed * is_on * duration / 60;
 
             total_time += duration;

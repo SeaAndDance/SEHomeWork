@@ -28,14 +28,20 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                              Object handler) {
 
         NeedAuthenticated needAuthenticated;
+
         if (handler instanceof HandlerMethod method) {
             needAuthenticated = method.getMethodAnnotation(NeedAuthenticated.class);
             if (needAuthenticated == null)
                 needAuthenticated = method.getMethod().getDeclaringClass().getAnnotation(NeedAuthenticated.class);
-            if (needAuthenticated == null)
+            if (needAuthenticated == null) {
+                System.out.println("No NeedAuthenticated 1");
                 return true;
-        } else
+            }
+        } else {
+            System.out.println("No NeedAuthenticated 2");
             return true;
+        }
+
 
         Cookie cookie = getCookie(request, "session");
         String session;

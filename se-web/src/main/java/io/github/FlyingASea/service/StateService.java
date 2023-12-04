@@ -6,6 +6,7 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service("StateService")
@@ -14,8 +15,19 @@ public class StateService {
     @Resource
     private StateMapper stateRepository;
 
+    @Resource
+    private DataService dataService;
+
     public StateEntity getState(String id) {
         return stateRepository.findStateById(id);
+    }
+
+    public Map<String, Object> removeState(String id) {
+        LocalDateTime dateTime = LocalDateTime.now();
+        Timestamp last_update = Timestamp.valueOf(dateTime);
+        stateRepository.modifyIsOn(id, 0, last_update);
+        StateEntity now = stateRepository.findStateById(id);
+        return dataService.generateBill(id, now);
     }
 
     public void createState(String id, int temperature, int wind_speed, int is_on, Timestamp last_update, Timestamp begin) {
@@ -25,33 +37,26 @@ public class StateService {
     public void changeState(String type, Object data,
                             String id, Timestamp last_update) {
         switch (type) {
-            case "temperature":
+            case "temperature" -> {
                 if (data instanceof Integer) {
                     stateRepository.modifyTemperature(id, (int) data, last_update);
                 }
                 if (data instanceof String) {
                     stateRepository.modifyTemperature(id, Integer.parseInt((String) data), last_update);
                 }
-            case "wind_speed":
+            }
+            case "wind_speed" -> {
                 if (data instanceof Integer) {
                     stateRepository.modifyWindSpeed(id, (int) data, last_update);
                 }
                 if (data instanceof String) {
                     stateRepository.modifyWindSpeed(id, Integer.parseInt((String) data), last_update);
                 }
-            case "is_on":
-                if (data instanceof Integer) {
-                    stateRepository.modifyIsOn(id, (int) data, last_update);
-                }
-                if (data instanceof String) {
-                    if (((String) data).contains("1") || ((String) data).contains("0"))
-                        stateRepository.modifyIsOn(id, Integer.parseInt((String) data), last_update);
-                    stateRepository.modifyIsOn(id, Boolean.getBoolean((String) data) ? 1 : 0, last_update);
-                }
-                if (data instanceof Boolean) {
-                    stateRepository.modifyIsOn(id, (Boolean) data ? 1 : 0, last_update);
-                }
+            }
+            case "start" -> stateRepository.modifyIsOn(id, 1, last_update);
+            case "stop" -> stateRepository.modifyIsOn(id, 0, last_update);
         }
+
     }
 
     public boolean createState(Map<String, Object> data, Timestamp begin) {

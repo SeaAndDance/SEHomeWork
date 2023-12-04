@@ -30,21 +30,30 @@ public class RoomController {
 
     private final int WIND_SPEED = 2;
 
+    @NeedAuthenticated
     @PostMapping("/check_in")
-    public ResponseEntity<Map<String, Object>> check_in(@RequestBody Map<String, String> data, HttpServletResponse response) {
+    public ResponseEntity<Map<String, Object>> check_in(@RequestBody Map<String, String> data) {
         String id = data.get("room");
         if (id == null)
             throw new ApiException(Errors.INVALID_DATA_FORMAT);
         if (stateService.getState(id) != null)
             throw new ApiException(Errors.USER_ALREADY_EXIST);
+
         LocalDateTime dateTime = LocalDateTime.now();
         Timestamp last_update = Timestamp.valueOf(dateTime);
-        stateService.createState(id, TEMPERATURE, WIND_SPEED, 0, last_update, last_update);
+        dataAndStateService.changeOrCreateStateAndData(Map.of(
+                "id", id,
+                "temperature", TEMPERATURE,
+                "wind_speed", WIND_SPEED,
+                "is_on", 0,
+                "last_update", last_update,
+                "begin", last_update));
         return ResponseEntity.ok(Map.of(
                 "room", id
         ));
     }
 
+    @NeedAuthenticated
     @PostMapping("/check_out")
     public ResponseEntity<Map<String, Object>> check_out(@RequestBody Map<String, String> data, HttpServletResponse response) {
         String id = data.get("room");

@@ -28,14 +28,18 @@ public class UserController {
         String id = data.get("username");
         String name = data.get("name");
         String password = data.get("password");
-        if (id == null || password == null || name == null)
+        if (id == null || password == null || name == null) {
             throw new ApiException(Errors.INVALID_DATA_FORMAT);
-        if (authenticationService.isInvalidID(id))
+        }
+        if (authenticationService.isInvalidID(id)) {
             throw new ApiException(Errors.INVALID_ID);
-        if (authenticationService.isInvalidPassword(password))
+        }
+        if (authenticationService.isInvalidPassword(password)) {
             throw new ApiException(Errors.INVALID_PASSWORD);
-        if (userService.getUser(id) != null)
+        }
+        if (userService.getUser(id) != null) {
             throw new ApiException(Errors.USER_ALREADY_EXIST);
+        }
         authenticationService.newUser(id, name, password);
         String session = authenticationService.createSession(id);
         Cookie cookie = new Cookie("session", session);

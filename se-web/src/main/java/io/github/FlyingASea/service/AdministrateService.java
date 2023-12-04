@@ -26,6 +26,6 @@ public class AdministrateService {
     }
 
     public List<String> getAllRoom(){
-       return List.of(roomRepository.getAllRoom());
+       return roomRepository.getAllRoom();
     }
 }

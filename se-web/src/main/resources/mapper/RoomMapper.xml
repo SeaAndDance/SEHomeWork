@@ -19,7 +19,8 @@
 		select * from Room where id = #{id}
 	</select>
 	
-	<select id="getAllRoom">
+	<select id="getAllRoom" resultType="string">
 		select id from Room
 	</select>
+
 </mapper>

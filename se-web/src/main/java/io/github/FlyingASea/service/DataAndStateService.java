@@ -5,10 +5,7 @@ import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 @Service("DataAndStateService")
@@ -19,41 +16,39 @@ public class DataAndStateService {
     @Resource
     private StateService stateService;
 
-    private Map<String, Object> convert(Map<String, String> data) {
-        Map<String, Object> stateEntity = new HashMap<>();
-        stateEntity.put("id", data.get("id"));
-        stateEntity.put("temperature", Integer.parseInt(data.get("temperature")));
-        stateEntity.put("wind_speed", Integer.parseInt(data.get("wind_speed")));
-        stateEntity.put("is_on", Integer.parseInt(data.get("is_on")));
-        stateEntity.put("last_update", new Timestamp(Date.from(Instant.parse(data.get("last_update"))).getTime()));
-        return stateEntity;
-    }
-
     public void changeSome(String type, String id, String data) {
         StateEntity past = stateService.getState(id);
+        System.out.println("past: " + past.getLast_update());
         LocalDateTime dateTime = LocalDateTime.now();
         Timestamp last_update = Timestamp.valueOf(dateTime);
+        System.out.println("now: " + last_update + "  type: " + type);
         stateService.changeState(type, data, past.getId(), last_update);
-        dataService.createState(stateService.getState(id));
+        StateEntity now = stateService.getState(id);
+        System.out.println("now State: " + now.getLast_update());
+        dataService.createState(now);
     }
 
-    public void changeStateAndData(Map<String, String> data, String id) {
-        StateEntity now = stateService.getState(id);
-        Map<String, Object> temp_data = convert(data);
-
+    public void changeOrCreateStateAndData(Map<String, Object> data) {
+        StateEntity now = stateService.getState((String) data.get("id"));
         if (now == null) {
-            LocalDateTime dateTime = LocalDateTime.now();
-            Timestamp last_update = Timestamp.valueOf(dateTime);
-            stateService.createState(temp_data, last_update);
+            if (data.get("begin") == null) {
+                LocalDateTime dateTime = LocalDateTime.now();
+                Timestamp last_update = Timestamp.valueOf(dateTime);
+                stateService.createState(data, last_update);
+            } else {
+                stateService.createState(data, (Timestamp) data.get("begin"));
+            }
+
         } else {
-            stateService.changeState(temp_data);
+            stateService.changeState(data);
         }
-        dataService.createState(temp_data);
+        dataService.createState(data);
     }
 
     public Map<String, Object> generateBill(String id) {
-        StateEntity now = stateService.getState(id);
-        return dataService.generateBill(id, now.getBegin());
+        Map<String, Object> bill = stateService.removeState(id);
+        stateService.removeState(id);
+        return bill;
     }
 
 }

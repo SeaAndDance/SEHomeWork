@@ -24,6 +24,7 @@ public interface StateMapper {
 
     void modifyIsOn(@Param("id") String id, @Param("is_on") int is_on, @Param("last_update") Timestamp last_update);
 
+    void removeState(@Param("id")String id);
     @MapKey("id")
     Map<String, Object> getAllState();
 }

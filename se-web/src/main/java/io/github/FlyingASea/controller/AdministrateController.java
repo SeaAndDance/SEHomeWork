@@ -32,7 +32,6 @@ public class AdministrateController {
     public ResponseEntity<Map<String, Object>> addDevice(@RequestBody Map<String, String> data, HttpServletResponse response) {
         String room = data.get("room");
         String public_key = data.get("public_key");
-        System.out.println(data);
         if (room == null || public_key == null)
             throw new ApiException(Errors.INVALID_DATA_FORMAT);
         if (administrateService.getRoom(room) != null)
@@ -59,17 +58,12 @@ public class AdministrateController {
 
     @NeedAuthenticated
     @GetMapping("/devices")
-    public ResponseEntity<List<String>> getAllDevice(@RequestBody Map<String, String> data, HttpServletResponse response) {
-        String room = data.get("room");
-        if (room == null)
-            throw new ApiException(Errors.INVALID_DATA_FORMAT);
-        if (administrateService.getRoom(room) == null)
-            throw new ApiException(Errors.USER_ALREADY_EXIST);
+    public ResponseEntity<List<String>> getAllDevice() {
         return ResponseEntity.ok(administrateService.getAllRoom());
     }
 
     @NeedAuthenticated
-    @GetMapping("/device/{room_id}")
+    @PostMapping("/device/{room_id}")
     public ResponseEntity<Map<String, Object>> controlDevice(@RequestBody Map<String, String> data,
                                                              @PathVariable("room_id") String id) {
         String operation = data.get("operation");
@@ -83,5 +77,4 @@ public class AdministrateController {
                 "room", id
         ));
     }
-
 }

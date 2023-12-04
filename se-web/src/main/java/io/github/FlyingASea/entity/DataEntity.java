@@ -10,7 +10,6 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Accessors(chain = true)
 public class DataEntity {
-    private int id;
     private String room;
     private int temperature;
     private int wind_speed;

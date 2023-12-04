@@ -34,7 +34,7 @@
     <update id="modifyTemperature">
         update State
         set temperature = #{temperature},
-            last_update=#{last_update}
+            last_update= #{last_update}
         where id = #{id}
     </update>
 
@@ -47,7 +47,7 @@
 
     <update id="modifyIsOn">
         update State
-        set is_on  = #{is_on},
+        set is_on = #{is_on},
             last_update=#{last_update}
         where id = #{id}
     </update>
@@ -55,5 +55,9 @@
     <select id="getAllState" resultType="hashmap">
         select id, is_on from State
     </select>
+    
+    <delete id="removeState">
+        delete from State where id = #{id}
+    </delete>
 
 </mapper>

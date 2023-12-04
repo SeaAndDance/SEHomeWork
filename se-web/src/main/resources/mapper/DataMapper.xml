@@ -3,12 +3,11 @@
 <mapper namespace="io.github.FlyingASea.dao.DataMapper">
 
     <resultMap id="RoomData" type="io.github.FlyingASea.entity.DataEntity">
-        <result column="id" jdbcType="INTEGER" property="id"/>
+        <result column="last_update" jdbcType="TIMESTAMP" property="last_update"/>
         <result column="room" jdbcType="VARCHAR" property="room"/>
         <result column="temperature" jdbcType="INTEGER" property="temperature"/>
         <result column="wind_speed" jdbcType="INTEGER" property="wind_speed"/>
         <result column="is_on" jdbcType="INTEGER" property="is_on"/>
-        <result column="last_update" jdbcType="TIMESTAMP" property="last_update"/>
     </resultMap>
 
     <select id="findDataById" resultType="io.github.FlyingASea.entity.DataEntity">
@@ -18,14 +17,17 @@
     </select>
 
 
-
-    <insert id="createData" parameterType="io.github.FlyingASea.entity.DataEntity" useGeneratedKeys="true" keyProperty="id">
-        insert into Data (room, temperature, wind_speed, is_on, last_update)
-        values (#{room}, #{temperature}, #{wind_speed}, #{is_on}, #{last_update})
+    <insert id="createData">
+        insert into Data (last_update, room, temperature, wind_speed, is_on)
+        values (#{last_update}, #{room}, #{temperature}, #{wind_speed}, #{is_on})
     </insert>
-    
-    <select id="selectDatasFromDate">
-        select * from Data where room = #{id} and datetime(last_update) >= datetime(#{begin}) order by last_update desc
+
+    <select id="selectDatasFromDate" resultType="io.github.FlyingASea.entity.DataEntity">
+        select *
+        from Data
+        where room = #{room}
+          and last_update >= #{begin}
+        order by last_update desc
     </select>
 
 
