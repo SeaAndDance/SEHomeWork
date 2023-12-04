@@ -14,4 +14,5 @@ public class StateEntity implements Serializable {
     private int wind_speed;
     private int is_on;
     private Timestamp last_update;
+    private Timestamp begin;
 }

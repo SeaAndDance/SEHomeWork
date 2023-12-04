@@ -10,16 +10,15 @@ public class RoomService {
     @Resource
     private RoomMapper roomRepository;
 
-
-    public void newRoom(String id, String public_key) {
-        roomRepository.createRoom(id, public_key);
+    public RoomEntity getRoom(String id){
+        return roomRepository.findRoomById(id);
     }
 
-    public void delRoom(String id) {
-        roomRepository.delRoomById(id);
+    public void checkInRoom(){
+
     }
 
-    public RoomEntity getRoom(String id) {
-       return roomRepository.findRoomById(id);
+    public void checkOutRoom(){
+
     }
 }

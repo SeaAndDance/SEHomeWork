@@ -8,6 +8,7 @@
         <result column="wind_speed" jdbcType="INTEGER" property="wind_speed"/>
         <result column="is_on" jdbcType="INTEGER" property="is_on"/>
         <result column="last_update" jdbcType="TIMESTAMP" property="last_update"/>
+        <result column="begin" jdbcType="TIMESTAMP" property="begin"/>
     </resultMap>
 
     <select id="findStateById" resultType="io.github.FlyingASea.entity.StateEntity">
@@ -17,8 +18,8 @@
     </select>
 
     <insert id="createState">
-        insert into State (id, temperature, wind_speed, is_on, last_update)
-        values (#{id}, #{temperature}, #{wind_speed}, #{is_on}, #{last_update})
+        insert into State (id, temperature, wind_speed, is_on, last_update, begin)
+        values (#{id}, #{temperature}, #{wind_speed}, #{is_on}, #{last_update}, #{begin})
     </insert>
 
     <update id="modifyState">
@@ -50,5 +51,9 @@
             last_update=#{last_update}
         where id = #{id}
     </update>
+
+    <select id="getAllState" resultType="hashmap">
+        select id, is_on from State
+    </select>
 
 </mapper>

@@ -2,15 +2,13 @@ package io.github.FlyingASea.service;
 
 import io.github.FlyingASea.dao.UserMapper;
 import io.github.FlyingASea.entity.UserEntity;
-import io.github.FlyingASea.util.Pair;
 import io.github.FlyingASea.util.RandomUtils;
 import jakarta.annotation.Resource;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Set;
 
 @Service("UserAuthenticationService")
 public class UserAuthenticationService {
@@ -23,14 +21,17 @@ public class UserAuthenticationService {
 
     @Cacheable(key = "#id + ':'", value = "userSession#604800")
     public String createOrGetSession(String id) {
-        return RandomUtils.randomString();
+        return RandomUtils.randomString(id);
     }
 
     @CachePut(key = "#id + ':'", value = "userSession#604800")
     public String createSession(String id) {
-        return RandomUtils.randomString();
+        return RandomUtils.randomString(id);
     }
 
+    @CacheEvict(key = "#id + ':'", value = "userToken#604800")
+    public void dropToken(String id) {
+    }
     private static final BCryptPasswordEncoder PASSWORD_ENCODER = new BCryptPasswordEncoder(10);
 
     public boolean isInvalidID(String id) {

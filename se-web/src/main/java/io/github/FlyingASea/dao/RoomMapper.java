@@ -9,4 +9,5 @@ public interface RoomMapper {
     void delRoomById(@Param("id") String id);
     void createRoom(@Param("id") String id, @Param("public_key") String public_key);
     RoomEntity findRoomById(@Param("id") String id);
+    String[] getAllRoom();
 }

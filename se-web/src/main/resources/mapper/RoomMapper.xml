@@ -18,4 +18,8 @@
 	<select id="findRoomById" resultType="io.github.FlyingASea.entity.RoomEntity">
 		select * from Room where id = #{id}
 	</select>
+	
+	<select id="getAllRoom">
+		select id from Room
+	</select>
 </mapper>

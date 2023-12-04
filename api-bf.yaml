@@ -517,7 +517,7 @@ components:
                   required: true
                 end_time:
                   type: string
-                  example: 2023-09-19T11:45:14+08:00 # ISO 8601
+                  example: 2023-09-19T11:45:14+08:00 # ISO 8601 2010-01-01T12:00:00+01:00
                   required: true
                 temperature:
                   type: integer

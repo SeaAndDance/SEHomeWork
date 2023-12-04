@@ -33,8 +33,7 @@ public class RedisConfig implements CachingConfigurer {
     @Bean
     public CacheManager cacheManager() {
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .entryTtl(Duration.ofDays(1))
-                .computePrefixWith(cacheName -> "caching:" + cacheName);
+                .entryTtl(Duration.ofDays(1));
         defaultCacheConfig = defaultCacheConfig.serializeKeysWith(
                 RedisSerializationContext.SerializationPair.fromSerializer(RedisSerializer.string()));
         defaultCacheConfig = defaultCacheConfig.serializeValuesWith(
