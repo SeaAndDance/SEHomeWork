@@ -1,15 +1,19 @@
 package io.github.FlyingASea;
 
+import com.sun.net.httpserver.HttpContext;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.util.concurrent.Executor;
 
 @Slf4j
-@SpringBootApplication
 public class Application {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
     }
+
 
 }
