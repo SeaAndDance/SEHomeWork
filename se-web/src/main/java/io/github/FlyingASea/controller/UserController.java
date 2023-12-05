@@ -76,6 +76,7 @@ public class UserController {
         return ResponseEntity.ok(Map.of(
                 "username", id
         ));
+
     }
 
     @NeedAuthenticated
@@ -90,6 +91,5 @@ public class UserController {
         response.addCookie(cookie);
         return ResponseEntity.ok().build();
     }
-
 
 }

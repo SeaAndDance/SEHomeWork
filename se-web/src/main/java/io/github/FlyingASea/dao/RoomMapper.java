@@ -13,4 +13,6 @@ public interface RoomMapper {
     void createRoom(@Param("id") String id, @Param("public_key") String public_key);
     RoomEntity findRoomById(@Param("id") String id);
     List<String> getAllRoom();
+    void updatePort(@Param("id") String id, @Param("port")String port);
+    String getPublic_key(@Param("id") String id);
 }

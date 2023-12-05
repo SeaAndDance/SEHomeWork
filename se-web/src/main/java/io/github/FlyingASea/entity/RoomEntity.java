@@ -12,6 +12,7 @@ public class RoomEntity {
 
     private String id;
     private String public_key;
+    private String port;
 
     public boolean isAnonymous() {
         return this == ANONYMOUS;

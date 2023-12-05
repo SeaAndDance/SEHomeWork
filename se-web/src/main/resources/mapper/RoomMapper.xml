@@ -4,6 +4,7 @@
 	<resultMap id="Room" type="io.github.FlyingASea.entity.RoomEntity">
 		<result column="id" jdbcType="VARCHAR" property="id"/>
 		<result column="public_key" jdbcType="VARCHAR" property="public_key"/>
+		<result column="port" jdbcType="VARCHAR" property="port"/>
 	</resultMap>
 
 	<insert id="createRoom">
@@ -21,6 +22,14 @@
 	
 	<select id="getAllRoom" resultType="string">
 		select id from Room
+	</select>
+	
+	<update id="updatePort">
+		update Room set port = #{port} where id = #{id}
+	</update>
+
+	<select id="getPublic_key" resultType="string">
+		select public_key from Room where id = #{id}
 	</select>
 
 </mapper>
