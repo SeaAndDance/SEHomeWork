@@ -129,7 +129,7 @@ components:
         operation:
           type: string
           example: start
-          # start_temperature_wind_speed, stop, temperature_39, wind_speed_2, start_25_1
+          # start_temperature_wind_speed, stop
           required: true
         data:
           type: string
