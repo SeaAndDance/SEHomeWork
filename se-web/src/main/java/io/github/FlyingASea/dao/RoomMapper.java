@@ -15,4 +15,6 @@ public interface RoomMapper {
     List<String> getAllRoom();
     void updatePort(@Param("id") String id, @Param("port")String port);
     String getPublic_key(@Param("id") String id);
+
+    String getPort(@Param("id")String id);
 }

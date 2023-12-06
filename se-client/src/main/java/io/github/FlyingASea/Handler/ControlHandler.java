@@ -9,7 +9,6 @@ import io.github.FlyingASea.exception.ErrorCode;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 public class ControlHandler implements HttpHandler {
@@ -22,6 +21,7 @@ public class ControlHandler implements HttpHandler {
         if (data == null || operation == null) {
             ErrorCode.errorResponse(100, 401, exchange);
         }
+
         exchange.sendResponseHeaders(204, -1);
     }
 

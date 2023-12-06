@@ -28,6 +28,10 @@ public class RoomService {
         return flag;
     }
 
+    public String getPort(String id){
+        return roomRepository.getPort(id);
+    }
+
     public boolean checkSign(String operation, String unique_id,
                              String data, String time, String id, String signature) {
         return SHA256withRSAUtil.verifySign(roomRepository.getPublic_key(id), operation + unique_id + data + time, signature);
@@ -36,4 +40,6 @@ public class RoomService {
     public boolean checkSign(Map<String, String> map) {
         return checkSign(map.get("operation"), map.get("unique_id"), map.get("data"), map.get("time"), map.get("id"), map.get("signature"));
     }
+
+
 }

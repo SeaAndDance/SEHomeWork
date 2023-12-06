@@ -6,17 +6,16 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.*;
 
 @Service("DataAndStateService")
 public class DataAndStateService {
     @Resource
     private DataService dataService;
-
     @Resource
     private StateService stateService;
 
-    public void changeSome(String type, String id, String data) {
+    public boolean changeSome(String type, String id, String data) {
         StateEntity past = stateService.getState(id);
         System.out.println("past: " + past.getLast_update());
         LocalDateTime dateTime = LocalDateTime.now();
@@ -26,6 +25,7 @@ public class DataAndStateService {
         StateEntity now = stateService.getState(id);
         System.out.println("now State: " + now.getLast_update());
         dataService.createState(now);
+        return true;
     }
 
     public void changeOrCreateStateAndData(Map<String, Object> data) {

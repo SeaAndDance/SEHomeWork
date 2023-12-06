@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户界面</title>
+    <style>
+        
+        
+         /* 设置整个页面的背景颜色 */
+         body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%; 
+            display: flex; /* 启用 flex 布局 */
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直靠顶 flex-start*/
+            overflow: hidden; /* 防止页面滚动 */
+        }
+        
+        
+        .container {
+            width: 90%; /* 宽度为界面宽度的 7/8 */
+            height: 90%; /* 高度为界面高度的 6/7 */
+            position: relative; /* 设置相对定位，作为绝对定位子元素的参照 */
+            background-color: #222; /* 容器背景颜色 */
+            margin: 0 auto; /* 水平居中 */
+            padding: 0.1%; /* 如果需要，可以添加内边距 */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5); /* 可选，添加阴影以突出容器 */
+            overflow: auto; /* 如果内容超出，允许滚动 */
+        }
+        /* ----------头部区域------------------------------------------------------------ */
+        .header {
+            background-color: #2c2d2f;
+            position: relative; /* 确保 .header 使用相对定位 */
+            height: 10%; /* 固定高度 */
+            color: white;
+            text-align: center;
+            /*padding: 1em 0;*/
+        }
+        /*头像类*/
+        .profile-photo {
+            /* 圆形样式设置 */
+            width: 4vw; /* 头像宽度，也决定了圆的大小 */
+            height: 4vw; /* 头像高度，也决定了圆的大小 */
+            border-radius: 50%; /* 设置为 50% 产生圆形 */
+            object-fit: cover; /* 保证图片覆盖整个区域，不失真 */
+            
+            /* 定位头像在头部区域的中心 */
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            transform: translate(-50%, -50%); /* 使用 transform 来精确居中 */
+            
+            /* 可以添加边框或其他样式 */
+            border: 100% solid white; /* 举例：添加一个白色边框 */
+        }
+        .header-text {
+            position: absolute; /* 绝对定位，相对于它的第一个具有相对定位的父元素 */
+            top: 50%; /* 定位到顶部区域的中间，可能需要根据实际内容调整 */
+            left: 15%; /* 定位到左侧的中间，可能需要根据实际内容调整 */
+            transform: translate(-50%, -50%); /* 精确居中 */
+            color: #FFF;
+            font-family: 'Crimson Text', serif; /* 确保您有加载或安装了 'Crimson Text' 字体 */
+            font-size: 200%;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+        }
+        /* 时钟 */
+        .clock {
+            position: absolute;
+            top: 30%; /* 可根据需要调整 */
+            right: 6%; /* 可根据需要调整 */
+            color: #FAFAFA; /* 文本颜色 */
+            font-size: 2em; /* 文本大小 */
+            z-index: 1001; /* 确保它不会被其他元素遮挡 */
+        }
+
+        /* -------------侧边栏---------------------------------------------------------------------- */
+        .sidebar {
+            background-color: #2c2d2f;
+            position: absolute; /* 使用绝对定位 */
+            top : 11%;
+            width: 15vw; /* 固定宽度 */
+            height: 85%;; /* 计算侧边栏高度 */
+            padding: 1em 0;
+        }
+        .sidebar-image_air {
+            
+            position: absolute; /* 绝对定位 */
+            top: 3.5vh; /* 与按钮相同的顶部位置 */
+            left: 3.5vw; /* 水平居中 */
+            width: 7vw; /* 固定宽度 */
+            
+            /* 设置图片的尺寸，需要根据实际情况调整 */
+        }
+        .sidebar-image_air2 {
+            
+            position: absolute; /* 绝对定位 */
+            top: 3.5vh; /* 与按钮相同的顶部位置 */
+            left: 3.5vw; /* 水平居中 */
+            width: 8vw; /* 固定宽度 */
+        }
+        .sidebar-text_air {
+            position: absolute; /* 绝对定位 */
+            top: 29%; /* 与按钮相同的顶部位置 */
+            left: 5vw; /* 水平居中 */
+            z-index: 1000; /* 置顶层 */
+            color:#FAFAFA;
+            /* 设置图片的尺寸，需要根据实际情况调整 */
+        }
+
+        .sidebar-image_bill {
+            position: absolute; /* 绝对定位 */
+            top: 26vh; /* 与按钮相同的顶部位置 */
+            left: 3vw; /* 水平居中 */
+            width: 7vw; /* 固定宽度 */
+            /* 设置图片的尺寸，需要根据实际情况调整 */
+        }
+        .sidebar-image_bill2 {
+            position: absolute; /* 绝对定位 */
+            top: 40%; /* 与按钮相同的顶部位置 */
+            left: 8%; /* 水平居中 */
+            /* 设置图片的尺寸，需要根据实际情况调整 */
+        }
+        .sidebar-text_bill {
+            position: absolute; /* 绝对定位 */
+            top: 53%; /* 与按钮相同的顶部位置 */
+            left: 5vw; /* 水平居中 */
+            z-index: 1000; /* 置顶层 */
+            color :#FAFAFA;
+            /* 设置图片的尺寸，需要根据实际情况调整 */
+        }
+        .image-air-button,.image-bill-button {
+            border: none; /* 移除边框 */
+            background: none; /* 移除背景色 */
+            padding: 0; /* 移除内边距 */
+            background-color :brown;
+            cursor: pointer; /* 将鼠标指针变为手形，表示这是一个可点击的元素 */
+            position: absolute; /* 绝对定位 */
+            /* 您可以根据需要调整位置 */
+        }
+
+        
+
+
+
+        /* ---------------主内容区------------------------------------------------------------------------- */
+        .main-content {
+            padding: 1em; /* 内边距，可根据需要进行调整 */
+            position: absolute; /* 使用绝对定位 */
+            top: 15%; /* 头部高度300px加上距离头部底端的200px */
+            right: 5vw; /* 距离容器右端的距离 */
+            left : 18vw;
+            /*margin-left: 1100px; /* 侧边栏宽度900px加上距离侧边栏的200px */
+            
+            height: 75%; /* 高度为2500px */
+            background-color: #2c2d2f;
+            padding: 1em;
+
+        }
+
+        /*-----电源开关--------*/
+        .power-switch{
+            position: absolute; /* 设置图片为绝对定位 */
+            top: 3%; /* 根据需要调整，这里是距离 .main-content 顶部的距离 */
+            left: 2%; /* 根据需要调整，这里是距离 .main-content 左侧的距离 */
+            width: 27%; /* 根据需要设置图片的宽度 */
+            height: auto; /* 设置高度为auto以保持图片的宽高比 */
+        }
+        .power-switch-image-trigger {
+            position: absolute; /* 绝对定位 */
+            top: 14.8%; /* 距离顶部20% */
+            left: 17.3%; /* 水平居中 */
+            transform: translateX(-50%); /* 水平居中调整 */
+            width: 7vw;/* 直径大小500px */
+            height: 7vw; /* 直径大小500px,怎么设置为圆形 */
+            border-radius: 50%; /* 圆形 */
+            opacity: 0.1; /* 透明设置为0,完全可见为1*/
+            background-color :brown;
+            cursor: pointer; /* 鼠标悬停时显示指针 */
+            z-index: 1000; /* 置顶层 */
+        }
+        .power-switch-hidden-image {
+            position: absolute; /* 绝对定位 */
+            top: 2.6vh; /* 与按钮相同的顶部位置 */
+            left: 10.5vw; /* 水平居中 */
+            width: 17.5vw; /* 根据需要设置图片的宽度 */
+            transform: translateX(-50%); /* 水平居中调整 */
+            /* 设置图片的尺寸，需要根据实际情况调整 */
+        }
+        .power-switch-hidden-image2 {
+            display: none; /* 默认隐藏图片 */
+            position: absolute; /* 绝对定位 */
+            top: 2.6vh; /* 与按钮相同的顶部位置 */
+            left: 10.5vw; /* 水平居中 */
+            width: 17.5vw; /* 根据需要设置图片的宽度 */
+            transform: translateX(-50%); /* 水平居中调整 */
+            /* 设置图片的尺寸，需要根据实际情况调整 */
+        }
+        .power-button {
+            border: none; /* 移除边框 */
+            background: none; /* 移除背景 */
+            padding: 0; /* 移除内边距 */
+        }
+
+
+        /*----室内温度-------*/
+        .room_temp{
+            position: absolute; /* 设置图片为绝对定位 */
+            top:48%; /* 根据需要调整，这里是距离 .main-content 顶部的距离 */
+            left: 2%; /* 根据需要调整，这里是距离 .main-content 左侧的距离 */
+            width: 25%; /* 根据需要设置图片的宽度 */
+            height: auto; /* 设置高度为auto以保持图片的宽高比 */
+        }
+        .room_temperature-display {
+            position: absolute; /* 使用绝对定位 */
+            top: 54%; /* 垂直居中 */
+            left: 15%; /* 距离左边19% */
+            width: 10%; /* 宽度500px */
+             /* 高度自动 */
+            background-color: #2c2d2f; /* 背景颜色白色 */
+            color: #B0B0B0; /* 字体颜色 */
+            font-size: 3vw; /* 字体大小，可根据需要调整 */
+            
+        }
+        
+
+        /*----主温度圆形表-------*/
+        .main_temp{
+            position: absolute; /* 设置图片为绝对定位 */
+            top: 7%; /* 根据需要调整，这里是距离 .main-content 顶部的距离 */
+            left: 36%; /* 根据需要调整，这里是距离 .main-content 左侧的距离 */
+            width: 26%; /* 根据需要设置图片的宽度 */
+            height: auto; /* 设置高度为auto以保持图片的宽高比 */
+        }
+        .big_temperature-display {
+            position: absolute; /* 使用绝对定位 */
+            top: 14vh; /* 垂直居中 */
+            left: 30vw; /* 距离左边19% */
+            width: 10vw; /* 宽度500px */
+            height: 10vh; /* 高度自动 */
+            background-color: #5f75a0; /* 背景颜色白色 */
+            background-color: transparent; /* 背景颜色透明 */
+            color: #FAFAFA; /* 字体颜色 */
+            font-size: 5vw; /* 字体大小，可根据需要调整 */
+            
+        }
+
+        /*----调节温度加减形状-------*/
+        .adjust_temp{
+            position: absolute; /* 设置图片为绝对定位 */
+            top: 6.5%; /* 根据需要调整，这里是距离 .main-content 顶部的距离 */
+            left: 72.5%; /* 根据需要调整，这里是距离 .main-content 左侧的距离 */
+            width: 27%; /* 根据需要设置图片的宽度 */
+            height: auto; /* 设置高度为auto以保持图片的宽高比 */
+        }
+        .small-switch-image-trigger {
+            position: absolute; /* 绝对定位 */
+            top: 29%; /* 距离顶部20% */
+            left: 80.6%; /* 水平居中 */
+            transform: translateX(-50%); /* 水平居中调整 */
+            width: 4.3vw; /* 直径大小500px */
+            height: 4.3vw; /* 直径大小500px */
+            border-radius: 0%; /* 圆形 */
+            opacity: 0.1; /* 透明设置为0,完全可见为1*/
+            background-color :brown;
+            cursor: pointer; /* 鼠标悬停时显示指针 */
+            z-index: 1000; /* 置顶层 */
+        }
+        .plus-switch-image-trigger {
+            position: absolute; /* 绝对定位 */
+            top: 29%; /* 距离顶部20% */
+            left: 92.2%; /* 水平居中 */
+            transform: translateX(-50%); /* 水平居中调整 */
+            width: 4.3vw; /* 直径大小500px */
+            height: 4.3vw; /* 直径大小500px */
+            border-radius: 0%; /* 圆形 */
+            opacity: 0.1; /* 透明设置为0,完全可见为1*/
+            background-color :brown;
+            cursor: pointer; /* 鼠标悬停时显示指针 */
+            z-index: 1000; /* 置顶层 */
+        }
+
+
+        /*----风量调节形状-------*/
+        .wind_speed{
+            position: absolute; /* 设置图片为绝对定位 */
+            top: 75%; /* 根据需要调整，这里是距离 .main-content 顶部的距离 */
+            left: 68%; /* 根据需要调整，这里是距离 .main-content 左侧的距离 */
+            width: 29%; /* 根据需要设置图片的宽度 */
+            height: auto; /* 设置高度为auto以保持图片的宽高比 */
+        }
+        .small-wind-trigger {
+            position: absolute; /* 绝对定位 */
+            top: 81%; /* 距离顶部20% */
+            left: 72.2%; /* 水平居中 */
+            transform: translateX(-50%); /* 水平居中调整 */
+            width: 4vw; /* 直径大小500px */
+            height: 3vw; /* 直径大小500px */
+            border-radius: 0%; /* 圆形 */
+            opacity: 0.1; /* 透明设置为0,完全可见为1*/
+            background-color :brown;
+            cursor: pointer; /* 鼠标悬停时显示指针 */
+            z-index: 1000; /* 置顶层 */
+        }
+        .plus-wind-trigger {
+            position: absolute; /* 绝对定位 */
+            top: 81%; /* 距离顶部20% */
+            left: 92.4%; /* 水平居中 */
+            transform: translateX(-50%); /* 水平居中调整 */
+            width: 4vw; /* 直径大小500px */
+            height: 3vw; /* 直径大小500px */
+            border-radius: 0%; /* 圆形 */
+            opacity: 0.1; /* 透明设置为0,完全可见为1*/
+            background-color :brown;
+            cursor: pointer; /* 鼠标悬停时显示指针 */
+            z-index: 1000; /* 置顶层 */
+        }
+
+        .wind-speed-display {
+            position: absolute; /* 绝对定位 */
+            top: 81.5%; /* 距离顶部85% */
+            left: 82.5%; /* 距离左侧85% */
+            width: 5%; /* 直径大小500px */
+            height:3vw; /* 直径大小500px */
+            background-color: transparent; /* 背景颜色透明 */
+            font-size: 1.5vw; /* 字体大小，可根据需要调整 */
+            text-align: center; /* 文本居中 */
+            color: #EBEBEB; /* 字体颜色 */
+            /* 根据需要添加其他样式，如padding, font-size等 */
+        }
+
+        /*------------------------模式---------------------------------------*/
+        .zhileng{
+            position: absolute; /* 设置图片为绝对定位 */
+            top: 74%; /* 根据需要调整，这里是距离 .main-content 顶部的距离 */
+            left: 2%; /* 根据需要调整，这里是距离 .main-content 左侧的距离 */
+            width: 12.5%; /* 根据需要设置图片的宽度 */
+            height: auto; /* 设置高度为auto以保持图片的宽高比 */
+        }
+        .zhileng2{
+            position: absolute; /* 设置图片为绝对定位 */
+            top: 74%; /* 根据需要调整，这里是距离 .main-content 顶部的距离 */
+            left: 2%; /* 根据需要调整，这里是距离 .main-content 左侧的距离 */
+            width: 12.5%; /* 根据需要设置图片的宽度 */
+            height: auto; /* 设置高度为auto以保持图片的宽高比 */
+        }
+        .zhire{
+            position: absolute; /* 设置图片为绝对定位 */
+            top: 78.8%; /* 根据需要调整，这里是距离 .main-content 顶部的距离 */
+            left: 18%; /* 根据需要调整，这里是距离 .main-content 左侧的距离 */
+            width: 11%; /* 根据需要设置图片的宽度 */
+            height: auto; /* 设置高度为auto以保持图片的宽高比 */
+        }
+        .zhire2{
+            position: absolute; /* 设置图片为绝对定位 */
+            top: 78.8%; /* 根据需要调整，这里是距离 .main-content 顶部的距离 */
+            left: 18%; /* 根据需要调整，这里是距离 .main-content 左侧的距离 */
+            width: 11%; /* 根据需要设置图片的宽度 */
+            height: auto; /* 设置高度为auto以保持图片的宽高比 */
+        }
+        .songfeng{
+            position: absolute; /* 设置图片为绝对定位 */
+            top: 78.6%; /* 根据需要调整，这里是距离 .main-content 顶部的距离 */
+            left: 32.5%; /* 根据需要调整，这里是距离 .main-content 左侧的距离 */
+            width: 10.5%; /* 根据需要设置图片的宽度 */
+            height: auto; /* 设置高度为auto以保持图片的宽高比 */
+        }
+        .songfeng2{
+            position: absolute; /* 设置图片为绝对定位 */
+            top: 78.6%; /* 根据需要调整，这里是距离 .main-content 顶部的距离 */
+            left: 32.5%; /* 根据需要调整，这里是距离 .main-content 左侧的距离 */
+            width: 10.5%; /* 根据需要设置图片的宽度 */
+            height: auto; /* 设置高度为auto以保持图片的宽高比 */
+        }
+        .auto{
+            position: absolute; /* 设置图片为绝对定位 */
+            top: 78.9%; /* 根据需要调整，这里是距离 .main-content 顶部的距离 */
+            left: 47%; /* 根据需要调整，这里是距离 .main-content 左侧的距离 */
+            width: 10.9%; /* 根据需要设置图片的宽度 */
+            height: auto; /* 设置高度为auto以保持图片的宽高比 */
+        }
+        .auto2{
+            position: absolute; /* 设置图片为绝对定位 */
+            top: 78.9%; /* 根据需要调整，这里是距离 .main-content 顶部的距离 */
+            left: 47%; /* 根据需要调整，这里是距离 .main-content 左侧的距离 */
+            width: 10.9%; /* 根据需要设置图片的宽度 */
+            height: auto; /* 设置高度为auto以保持图片的宽高比 */
+        }
+
+        /*----模式按钮-------*/
+        .zhileng-button, .zhire-button, .songfeng-button, .auto-button {
+            border: none; /* 移除边框 */
+            background: none; /* 移除背景 */
+            padding: 0; /* 移除内边距 */
+        }
+
+
+       
+
+        /* ---------------直线------------------------------------------------------------------------- */
+        .lineH1 {
+            position: absolute; /* 直线使用绝对定位，相对于 .main-content 定位 */
+            top: 45%; /* 将直线定位在 .main-content 的垂直中心 */
+            left: 0; /* 直线从左侧开始 */
+            width: 30%; /* 直线宽度与 .main-content 相同 */
+            height: 0.25vw; /* 直线的高度，1px 意味着它看起来像一条线 */
+            background: rgba(156, 148, 148, 0.50); /* 直线的背景颜色 */
+        }
+        .lineH2 {
+            position: absolute; /* 直线使用绝对定位，相对于 .main-content 定位 */
+            top: 70%; /* 将直线定位在 .main-content 的垂直中心 */
+            left: 0; /* 直线从左侧开始 */
+            width: 100%; /* 直线宽度与 .main-content 相同 */
+            height:   0.25vw; /* 直线的高度，1px 意味着它看起来像一条线 */
+            background: rgba(156, 148, 148, 0.50); /* 直线的背景颜色 */
+        }
+
+        .lineS1 {
+            position: absolute; /* 直线使用绝对定位，相对于 .main-content 定位 */
+            top: 0; /* 将直线定位在 .main-content 的垂直中心 */
+            left: 30%; /* 直线从左侧开始 */
+            width:   0.25vw; /* 直线宽度与 .main-content 相同 */
+            height: 70%; /* 直线的高度，1px 意味着它看起来像一条线 */
+            background: rgba(156, 148, 148, 0.50); /* 直线的背景颜色 */
+        }
+        .lineS2 {
+            position: absolute; /* 直线使用绝对定位，相对于 .main-content 定位 */
+            top: 70%; /* 将直线定位在 .main-content 的垂直中心 */
+            left: 65%; /* 直线从左侧开始 */
+            width:  0.25vw; /* 直线宽度与 .main-content 相同 */
+            height: 30%; /* 直线的高度，1px 意味着它看起来像一条线 */
+            background: rgba(156, 148, 148, 0.50); /* 直线的背景颜色 */
+        }
+        .lineS3 {
+            position: absolute; /* 直线使用绝对定位，相对于 .main-content 定位 */
+            top: 0; /* 将直线定位在 .main-content 的垂直中心 */
+            left: 70%; /* 直线从左侧开始 */
+            width:   0.25vw; /* 直线宽度与 .main-content 相同 */
+            height: 70%; /* 直线的高度，1px 意味着它看起来像一条线 */
+            background: rgba(156, 148, 148, 0.50); /* 直线的背景颜色 */
+        }
+
+        .lineC1 {
+            position: absolute; /* 直线使用绝对定位，相对于 .main-content 定位 */
+            top: 36%; /* 将直线定位在 .main-content 的垂直中心 */
+            left: 0; /* 直线从左侧开始 */
+            width: 15vw; /* 固定宽度 */
+            height: 0.25vw; /* 直线的高度，1px 意味着它看起来像一条线 */
+            background: rgba(156, 148, 148, 0.50); /* 直线的背景颜色 */
+        }
+        .lineC2 {
+            position: absolute; /* 直线使用绝对定位，相对于 .main-content 定位 */
+            top: 61%; /* 将直线定位在 .main-content 的垂直中心 */
+            left: 0; /* 直线从左侧开始 */
+            width: 15vw; /* 固定宽度 */
+            height: 0.25vw; /* 直线的高度，1px 意味着它看起来像一条线 */
+            background: rgba(156, 148, 148, 0.50); /* 直线的背景颜色 */
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="../../../asset/jpg/headphoto.jpg" alt="User Photo" class="profile-photo" />
+            <div class="header-text">Room: 717</div>
+            <div id="clock" class="clock"></div>
+        </div>
+
+        <!-- 侧边栏 -->
+        <div class="sidebar"></div>
+        
+            <button class="image-air-button" >
+                <img src="../../../asset/jpg/air.jpg" alt="Air" class="sidebar-image_air" />
+            </button>
+            <div class="sidebar-text_air">空调调节</div>
+
+            <button class="image-bill-button">
+                <img src="../../../asset/jpg/bill.jpg" alt="Bill" class="sidebar-image_bill" />
+            </button>
+            <div class="sidebar-text_bill">账单查询</div>
+
+
+            <div class="lineC1"></div>
+            <div class="lineC2"></div>      
+
+
+        <div class="main-content">
+            <div class="content"></div>
+            
+            <!-- 电源开关 -->
+            <button class="power-button">
+                <img src="path/to/power-switch-image.jpg" alt="Power Switch" class="power-switch-image-trigger" />
+            </button>
+            <img src="../../../asset/jpg/power_switch.jpg" alt="Power Off" class="power-switch-hidden-image" />
+            <img src="../../../asset/jpg/power_switch2.jpg" alt="Power On" class="power-switch-hidden-image2" />
+            
+
+            <!-- 房间温度 -->
+            <img src="../../../asset/jpg/room_temp.jpg" alt="Room Temperature" class="room_temp" />
+            <div class="room_temperature-display">28℃</div>
+
+            <!-- 主温度圆形表 -->
+            <img src="../../../asset/jpg/main_temp.jpg" alt="Main Temperature" class="main_temp" />
+            <div class="big_temperature-display">20</div>
+
+            <!-- 调节温度加减形状 -->
+            <img src="../../../asset/jpg/adjust_temp.jpg" alt="Adjust Temperature" class="adjust_temp" />
+            <button id="small-switch-image-trigger" class="small-switch-image-trigger"></button>
+            <button id="plus-switch-image-trigger" class="plus-switch-image-trigger"></button>
+
+            <!-- 风速形状 -->
+            <img src="../../../asset/jpg/wind_speed.jpg" alt="Wind Speed" class="wind_speed" />
+            <button id="small-wind-trigger" class="small-wind-trigger"></button>
+            <button id="plus-wind-trigger" class="plus-wind-trigger"></button>
+
+            <div class="wind-speed-display">中档</div>
+
+            <!-- 模式 -->
+            <button class="zhileng-button">
+                <img src="../../../asset/jpg/zhileng.jpg" alt="Zhileng" class="zhileng" />
+            </button>
+            <button class="zhire-button">
+                <img src="../../../asset/jpg/zhire.jpg" alt="Zhire" class="zhire" />
+            </button>
+            <button class="songfeng-button">
+                <img src="../../../asset/jpg/songfeng.jpg" alt="Songfeng" class="songfeng" />
+            </button>
+            <button class="auto-button">
+                <img src="../../../asset/jpg/auto.jpg" alt="Auto" class="auto" />
+            </button>            
+
+            <!-----直线框----->
+            <div class="lineH1"></div>
+            <div class="lineH2"></div>
+            <div class="lineS1"></div>
+            <div class="lineS2"></div>
+            <div class="lineS3"></div>
+        </div>
+    </div>
+    <script src="buttonTrigger.js"></script>
+</body>
+</html>

@@ -32,4 +32,8 @@
 		select public_key from Room where id = #{id}
 	</select>
 
+	<select id="getPort">
+		select port from Room where id = #{id}
+	</select>
+
 </mapper>

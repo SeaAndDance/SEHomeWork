@@ -1,5 +1,7 @@
 package io.github.FlyingASea.controller;
 
+import io.github.FlyingASea.entity.TaskEntity;
+import io.github.FlyingASea.post.Schema;
 import io.github.FlyingASea.result.ApiException;
 import io.github.FlyingASea.result.Errors;
 import io.github.FlyingASea.service.DataAndStateService;
@@ -20,9 +22,11 @@ public class DeviceController {
     @Resource
     private RoomService roomService;
 
-
     @Resource
     private DataAndStateService dataAndStateService;
+
+    @Resource
+    private Schema schema;
 
     @PostMapping("/client")
     public ResponseEntity<Map<String, Object>> newUser(@RequestBody Map<String, String> data, HttpServletResponse response) {
@@ -63,7 +67,11 @@ public class DeviceController {
         if (!roomService.checkSign(body))
             throw new ApiException(Errors.USER_ALREADY_EXIST);
 
-        dataAndStateService.changeSome(operation, id, data);
+
+        Schema.receiveQueue.add(new TaskEntity(id, Map.of(
+                "operation", operation,
+                "data", data
+                )));
         return ResponseEntity.ok().build();
 
     }
