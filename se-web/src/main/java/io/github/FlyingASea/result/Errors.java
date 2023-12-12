@@ -9,15 +9,17 @@ public enum Errors {
     UNKNOWN_ERROR(1, 500, "Server unknown error"),
     // ------------------ 1xx: Login, Authorized ------------------
     UNAUTHORIZED(100, 401, "Unauthorized"),
-    FORBIDDEN(101, 403, "Forbidden"),
+    WRONG_USER_ID(101, 403, "User is not exist"),
     WRONG_PASSWORD(102, 403, "Wrong user or password"),
     PERMISSION_DENIED(103, 403, "Permission denied"),
     INVALID_REFRESH_TOKEN(104, 403, "Invalid refresh token"),
     INVALID_ID(105, 400, "Invalid id"),
     INVALID_PASSWORD(106, 400, "Invalid password"),
     USER_ALREADY_EXIST(107, 409, "User already exist"),
+
     // ------------------ 2xx: Rate Limit -------------------------
     TOO_MANY_REQUESTS(201, 429, "Too many requests"),
+
     // ------------------ 3xx: Bad Request ------------------------
     BAD_REQUEST(300, 400, "Bad request"),
     UNSUPPORTED_MEDIA_TYPE(301, 415, "Unsupported media type"),
