@@ -55,6 +55,10 @@
     <select id="getAllState" resultType="hashmap">
         select id, is_on from State
     </select>
+
+    <select id="getAllRoomState" resultType="hashmap">
+        select id, * from State
+    </select>
     
     <delete id="removeState">
         delete from State where id = #{id}

@@ -21,13 +21,13 @@ public class QueryController {
     private StateService stateService;
 
     @NeedAuthenticated
-    @PostMapping("/")
-    public ResponseEntity<List<Map<String, Object>>> deleteDevice() {
+    @GetMapping("/")
+    public ResponseEntity<List<Map<String, Object>>> getDeviceShort() {
         return ResponseEntity.ok(stateService.getAllState());
     }
 
     @NeedAuthenticated
-    @PostMapping("/{room_id}")
+    @GetMapping("/{room_id}")
     public ResponseEntity<Map<String, Object>> deleteDevice(@RequestBody Map<String, String> data,
                                                             HttpServletResponse response,
                                                             @PathVariable("room_id") String id) {
@@ -44,5 +44,11 @@ public class QueryController {
                 "is_on", room.getIs_on() == 1,
                 "last_update", room.getLast_update()
         ));
+    }
+
+    @NeedAuthenticated
+    @GetMapping("/all")
+    public ResponseEntity<List<Map<String, Object>>> getAllState() {
+        return ResponseEntity.ok(stateService.getAllRoomState());
     }
 }

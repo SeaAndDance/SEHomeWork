@@ -108,4 +108,21 @@ public class StateService {
         }
         return remap;
     }
+
+    public List<Map<String, Object>> getAllRoomState(){
+        Map<String,StateEntity> map = stateRepository.getAllRoomState();
+        List<Map<String, Object>> remap = new ArrayList<>();
+        if (map != null && !map.isEmpty()) {
+            for (Map.Entry<String, StateEntity> i : map.entrySet()) {
+                Map<String, Object> t = new HashMap<>();
+                t.put("room", i.getKey());
+                t.put("temperature", i.getValue().getTemperature());
+                t.put("wind_speed", i.getValue().getWind_speed());
+                t.put("is_on", i.getValue().getIs_on());
+                t.put("last_update", i.getValue().getLast_update());
+                remap.add(t);
+            }
+        }
+        return remap;
+    }
 }

@@ -27,4 +27,7 @@ public interface StateMapper {
     void removeState(@Param("id")String id);
     @MapKey("id")
     Map<String, Object> getAllState();
+
+    @MapKey("id")
+    Map<String, StateEntity> getAllRoomState();
 }
