@@ -23,7 +23,7 @@ public class DataService {
     }
 
 
-    public void createState(String room, int temperature, int wind_speed, int is_on, Timestamp last_update) {
+    public void createState(String room, Double temperature, int wind_speed, int is_on, Timestamp last_update) {
         dataRepository.createData(last_update, room, temperature, wind_speed, is_on);
     }
 
@@ -43,7 +43,7 @@ public class DataService {
         if (room instanceof String && temperature instanceof Integer && wind_speed instanceof Integer &&
                 is_on instanceof Integer && last_update instanceof Timestamp) {
             dataRepository.createData((Timestamp) last_update, (String) room,
-                    (int) temperature, (int) wind_speed, (int) is_on);
+                    (Double) temperature, (int) wind_speed, (int) is_on);
             return true;
         } else {
             return false;
@@ -56,26 +56,20 @@ public class DataService {
                 now.getTemperature(), now.getWind_speed(), now.getIs_on());
 
         DataEntity[] datas = dataRepository.selectDatasFromDate(id, now.getBegin());
-
-        for (DataEntity i : datas) {
-            System.out.println(i);
-        }
-
         long total_cost = 0L, total_time = 0L;
         Map<String, Object> report = new HashMap<>();
         List<Map<String, Object>> items = new ArrayList<>();
 
-        System.out.println(datas.length);
-
         for (int i = 0; i < datas.length - 1; i++) {
+
             Timestamp start = datas[i].getLast_update();
             Timestamp end = datas[i + 1].getLast_update();
-            int temperature = datas[i].getTemperature();
+            Double temperature = datas[i].getTemperature();
             int wind_speed = datas[i].getWind_speed();
             int is_on = datas[i].getIs_on();
 
             long duration = Math.abs(Duration.between(end.toInstant(), start.toInstant()).getSeconds());
-            long cost = 3 * temperature * wind_speed * is_on * duration / 60;
+            long cost = (long) (3 * temperature * wind_speed * is_on * duration / 600);
 
             total_time += duration;
             total_cost += cost;

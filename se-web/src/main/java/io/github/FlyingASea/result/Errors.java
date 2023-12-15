@@ -19,6 +19,8 @@ public enum Errors {
 
     // ------------------ 2xx: Rate Limit -------------------------
     TOO_MANY_REQUESTS(201, 429, "Too many requests"),
+    ROOM_IS_NOT_EXISTS(202,403,"Room is not exist"),
+    ROOM_ALREADY_EXIST(203, 409, "Room already exist"),
 
     // ------------------ 3xx: Bad Request ------------------------
     BAD_REQUEST(300, 400, "Bad request"),

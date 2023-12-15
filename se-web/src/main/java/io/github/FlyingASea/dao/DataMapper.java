@@ -11,7 +11,7 @@ public interface DataMapper {
 
     void createData(@Param("last_update") Timestamp last_update,
                     @Param("room") String room,
-                    @Param("temperature") int temperature,
+                    @Param("temperature") Double temperature,
                     @Param("wind_speed") int wind_speed,
                     @Param("is_on") int is_on);
 

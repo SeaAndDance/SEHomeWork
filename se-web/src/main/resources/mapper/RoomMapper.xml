@@ -32,7 +32,7 @@
 		select public_key from Room where id = #{id}
 	</select>
 
-	<select id="getPort">
+	<select id="getPort" resultType="string">
 		select port from Room where id = #{id}
 	</select>
 

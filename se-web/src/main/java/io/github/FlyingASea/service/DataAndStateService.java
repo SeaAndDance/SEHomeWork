@@ -38,7 +38,6 @@ public class DataAndStateService {
             } else {
                 stateService.createState(data, (Timestamp) data.get("begin"));
             }
-
         } else {
             stateService.changeState(data);
         }
@@ -46,9 +45,11 @@ public class DataAndStateService {
     }
 
     public Map<String, Object> generateBill(String id) {
-        Map<String, Object> bill = stateService.removeState(id);
-        stateService.removeState(id);
-        return bill;
+        return stateService.generateBill(id);
+    }
+
+    public Map<String, Object> getHistory(String id) {
+        return dataService.generateBill(id, stateService.getState(id));
     }
 
 }

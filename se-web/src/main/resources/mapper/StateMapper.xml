@@ -4,7 +4,7 @@
 
     <resultMap id="RoomData" type="io.github.FlyingASea.entity.StateEntity">
         <result column="id" jdbcType="VARCHAR" property="id"/>
-        <result column="temperature" jdbcType="INTEGER" property="temperature"/>
+        <result column="temperature" jdbcType="DOUBLE" property="temperature"/>
         <result column="wind_speed" jdbcType="INTEGER" property="wind_speed"/>
         <result column="is_on" jdbcType="INTEGER" property="is_on"/>
         <result column="last_update" jdbcType="TIMESTAMP" property="last_update"/>
@@ -57,7 +57,8 @@
     </select>
 
     <select id="getAllRoomState" resultType="hashmap">
-        select id, * from State
+        select id, *
+        from State
     </select>
     
     <delete id="removeState">

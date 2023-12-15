@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @Accessors(chain = true)
 public class DataEntity {
     private String room;
-    private int temperature;
+    private Double temperature;
     private int wind_speed;
     private int is_on;
     private Timestamp last_update;

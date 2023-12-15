@@ -10,7 +10,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 public class StateEntity implements Serializable {
     private String id;
-    private int temperature;
+    private Double temperature;
     private int wind_speed;
     private int is_on;
     private Timestamp last_update;

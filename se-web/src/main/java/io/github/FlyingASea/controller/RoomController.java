@@ -5,10 +5,10 @@ import io.github.FlyingASea.result.Errors;
 import io.github.FlyingASea.service.DataAndStateService;
 import io.github.FlyingASea.service.StateService;
 import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -24,9 +24,7 @@ public class RoomController {
     @Resource
     private StateService stateService;
 
-    private final int TEMPERATURE = 25;
-
-    private final int WIND_SPEED = 2;
+    private final double[] TEMPERATURE = {32, 28, 30, 29, 35};
 
     @NeedAuthenticated
     @PostMapping("/check_in")
@@ -35,17 +33,28 @@ public class RoomController {
         if (id == null)
             throw new ApiException(Errors.INVALID_DATA_FORMAT);
         if (stateService.getState(id) != null)
-            throw new ApiException(Errors.USER_ALREADY_EXIST);
+            throw new ApiException(Errors.ROOM_ALREADY_EXIST);
 
         LocalDateTime dateTime = LocalDateTime.now();
         Timestamp last_update = Timestamp.valueOf(dateTime);
-        dataAndStateService.changeOrCreateStateAndData(Map.of(
-                "id", id,
-                "temperature", TEMPERATURE,
-                "wind_speed", WIND_SPEED,
-                "is_on", 0,
-                "last_update", last_update,
-                "begin", last_update));
+        int WIND_SPEED = 2;
+        if (Integer.parseInt(id) - 1 < TEMPERATURE.length) {
+            dataAndStateService.changeOrCreateStateAndData(Map.of(
+                    "id", id,
+                    "temperature", TEMPERATURE[Integer.parseInt(id) - 1],
+                    "wind_speed", WIND_SPEED,
+                    "is_on", 0,
+                    "last_update", last_update,
+                    "begin", last_update));
+        } else {
+            dataAndStateService.changeOrCreateStateAndData(Map.of(
+                    "id", id,
+                    "temperature", TEMPERATURE[new SecureRandom().nextInt(TEMPERATURE.length)],
+                    "wind_speed", WIND_SPEED,
+                    "is_on", 0,
+                    "last_update", last_update,
+                    "begin", last_update));
+        }
         return ResponseEntity.ok(Map.of(
                 "room", id
         ));
@@ -53,13 +62,25 @@ public class RoomController {
 
     @NeedAuthenticated
     @PostMapping("/check_out")
-    public ResponseEntity<Map<String, Object>> check_out(@RequestBody Map<String, String> data, HttpServletResponse response) {
+    public ResponseEntity<Map<String, Object>> check_out(@RequestBody Map<String, String> data) {
         String id = data.get("room");
         if (id == null)
             throw new ApiException(Errors.INVALID_DATA_FORMAT);
         if (stateService.getState(id) == null)
-            throw new ApiException(Errors.USER_ALREADY_EXIST);
+            throw new ApiException(Errors.ROOM_IS_NOT_EXISTS);
         Map<String, Object> result = dataAndStateService.generateBill(id);
+        return ResponseEntity.ok(result);
+    }
+
+    @NeedAuthenticated
+    @PostMapping("/all")
+    public ResponseEntity<Map<String, Object>> getHistory(@RequestBody Map<String, String> data) {
+        String id = data.get("room");
+        if (id == null)
+            throw new ApiException(Errors.INVALID_DATA_FORMAT);
+        if (stateService.getState(id) == null)
+            throw new ApiException(Errors.ROOM_IS_NOT_EXISTS);
+        Map<String, Object> result = dataAndStateService.getHistory(id);
         return ResponseEntity.ok(result);
     }
 }

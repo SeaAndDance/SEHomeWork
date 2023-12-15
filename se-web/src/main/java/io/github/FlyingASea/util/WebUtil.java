@@ -2,18 +2,13 @@ package io.github.FlyingASea.util;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import org.apache.hc.client5.http.classic.methods.HttpUriRequest;
-import org.apache.hc.client5.http.impl.classic.BasicHttpClientResponseHandler;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.core5.http.ClassicHttpRequest;
-import org.apache.hc.core5.http.ContentType;
-import org.apache.hc.core5.http.Header;
-import org.apache.hc.core5.http.HttpEntity;
-import org.apache.hc.core5.http.io.HttpClientResponseHandler;
-import org.apache.hc.core5.http.io.entity.EntityUtils;
-import org.apache.hc.core5.http.protocol.HttpContext;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
 import java.util.Random;
@@ -37,13 +32,27 @@ public class WebUtil {
     }
 
     public static JsonElement fetchDataInJson(HttpUriRequest request, String UA) throws IOException {
-        return HttpClientBuilder.create()
+        CloseableHttpClient httpClient = HttpClientBuilder.create()
                 .disableCookieManagement()
-                .setUserAgent(UA).build().execute(request, response -> {
-                    HttpEntity httpEntity = response.getEntity();
-                    String json = EntityUtils.toString(httpEntity, "UTF-8");
-                    EntityUtils.consume(httpEntity);
-                    return JsonParser.parseString(json);
-                });
+                .setUserAgent(UA).build();
+        CloseableHttpResponse response = httpClient.execute(request);
+        if (response == null)
+            return null;
+        int status = response.getStatusLine().getStatusCode();
+        if (status / 100 == 2)
+            return null;
+        else {
+            HttpEntity httpEntity = response.getEntity();
+            String json = EntityUtils.toString(httpEntity, "UTF-8");
+            EntityUtils.consume(httpEntity);
+            if (json == null || json.isEmpty())
+                return null;
+            try {
+                return JsonParser.parseString(json);
+            } catch (Exception e) {
+                System.out.println(e);
+                return null;
+            }
+        }
     }
 }

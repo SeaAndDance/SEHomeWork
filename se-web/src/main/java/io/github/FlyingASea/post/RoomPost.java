@@ -1,31 +1,27 @@
 package io.github.FlyingASea.post;
 
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import io.github.FlyingASea.util.WebUtil;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.entity.UrlEncodedFormEntity;
-import org.apache.hc.core5.http.NameValuePair;
-import org.apache.hc.core5.http.message.BasicNameValuePair;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class RoomPost {
     public static int ClientControl(Map<String, String> data, String URL) throws IOException {
         HttpPost httpPost = new HttpPost(URL);
-        List<NameValuePair> paramsList = new ArrayList<>();
-        for (Map.Entry<String, String> i : data.entrySet()) {
-            paramsList.add(new BasicNameValuePair(i.getKey(), i.getValue()));
-        }
-        httpPost.setEntity(new UrlEncodedFormEntity(paramsList, StandardCharsets.UTF_8));
-        JsonObject body = WebUtil.fetchDataInJson(httpPost).getAsJsonObject();
-        if (body == null) {
+        httpPost.setEntity(new StringEntity(new Gson().toJson(data), ContentType.APPLICATION_JSON));
+        if (WebUtil.fetchDataInJson(httpPost) == null) {
             return -1;
-        } else {
+        }
+        JsonObject body = WebUtil.fetchDataInJson(httpPost).getAsJsonObject();
+        if (body.getAsJsonPrimitive("errorCode") == null)
+            return -1;
+        else {
             return body.getAsJsonPrimitive("errorCode").getAsInt();
         }
     }

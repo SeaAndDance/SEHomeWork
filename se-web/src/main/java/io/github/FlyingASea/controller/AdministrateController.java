@@ -31,7 +31,7 @@ public class AdministrateController {
         if (room == null || public_key == null)
             throw new ApiException(Errors.INVALID_DATA_FORMAT);
         if (administrateService.getRoom(room) != null)
-            throw new ApiException(Errors.USER_ALREADY_EXIST);
+            throw new ApiException(Errors.ROOM_ALREADY_EXIST);
         administrateService.newRoom(room, public_key);
         return ResponseEntity.ok(Map.of(
                 "room", room
@@ -67,7 +67,7 @@ public class AdministrateController {
         if (id == null || operation == null || num == null)
             throw new ApiException(Errors.INVALID_DATA_FORMAT);
         if (administrateService.getRoom(id) == null)
-            throw new ApiException(Errors.USER_ALREADY_EXIST);
+            throw new ApiException(Errors.ROOM_IS_NOT_EXISTS);
         dataAndStateService.changeSome(operation, id, num);
         return ResponseEntity.ok(Map.of(
                 "room", id

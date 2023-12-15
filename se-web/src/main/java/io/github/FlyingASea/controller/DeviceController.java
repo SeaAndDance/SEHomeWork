@@ -12,6 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -38,7 +39,7 @@ public class DeviceController {
             throw new ApiException(Errors.INVALID_DATA_FORMAT);
         }
         if (roomService.getRoom(room) == null) {
-            throw new ApiException(Errors.USER_ALREADY_EXIST);
+            throw new ApiException(Errors.ROOM_IS_NOT_EXISTS);
         }
         if (roomService.updateRoomPort(room, port, unique_id, signature))
             return ResponseEntity.ok().build();
@@ -58,6 +59,7 @@ public class DeviceController {
                 unique_id == null || signature == null || id == null) {
             throw new ApiException(Errors.INVALID_DATA_FORMAT);
         }
+
         if (roomService.getRoom(id) == null) {
             throw new ApiException(Errors.USER_ALREADY_EXIST);
         }
@@ -68,10 +70,7 @@ public class DeviceController {
             throw new ApiException(Errors.USER_ALREADY_EXIST);
 
 
-        Schema.receiveQueue.add(new TaskEntity(id, Map.of(
-                "operation", operation,
-                "data", data
-                )));
+        Schema.addToReadyQueue(id, operation, Double.parseDouble(data));
         return ResponseEntity.ok().build();
 
     }

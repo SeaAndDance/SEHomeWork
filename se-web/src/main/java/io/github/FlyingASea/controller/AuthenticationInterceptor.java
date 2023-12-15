@@ -34,18 +34,16 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
             if (needAuthenticated == null)
                 needAuthenticated = method.getMethod().getDeclaringClass().getAnnotation(NeedAuthenticated.class);
             if (needAuthenticated == null) {
-                System.out.println("No NeedAuthenticated 1");
                 return true;
             }
         } else {
-            System.out.println("No NeedAuthenticated 2");
             return true;
         }
 
 
         Cookie cookie = getCookie(request, "session");
         String session;
-        boolean checked = true;
+        boolean checked;
 
         if (cookie == null) {
             checked = false;
@@ -63,9 +61,6 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
                 }
             }
         }
-
-        if (!checked && !needAuthenticated.isOptional())
-            throw new ApiException(Errors.UNAUTHORIZED);
         return true;
     }
 

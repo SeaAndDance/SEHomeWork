@@ -5,7 +5,7 @@
     <resultMap id="RoomData" type="io.github.FlyingASea.entity.DataEntity">
         <result column="last_update" jdbcType="TIMESTAMP" property="last_update"/>
         <result column="room" jdbcType="VARCHAR" property="room"/>
-        <result column="temperature" jdbcType="INTEGER" property="temperature"/>
+        <result column="temperature" jdbcType="DOUBLE" property="temperature"/>
         <result column="wind_speed" jdbcType="INTEGER" property="wind_speed"/>
         <result column="is_on" jdbcType="INTEGER" property="is_on"/>
     </resultMap>

@@ -21,7 +21,7 @@ public class ControlHandler implements HttpHandler {
         if (data == null || operation == null) {
             ErrorCode.errorResponse(100, 401, exchange);
         }
-
+        System.out.println(data);
         exchange.sendResponseHeaders(204, -1);
     }
 
