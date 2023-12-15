@@ -30,7 +30,8 @@ public class TaskEntity {
         this.roomTemperature = roomTemperature;
         this.last_update = new Timestamp(System.currentTimeMillis());
     }
-    public TaskEntity(TaskEntity entity){
+
+    public TaskEntity(TaskEntity entity) {
         this.startTime = System.currentTimeMillis();
         this.aimT = entity.aimT;
         this.speed = entity.getSpeed();
@@ -65,6 +66,10 @@ public class TaskEntity {
         if (task instanceof TaskEntity)
             return ((TaskEntity) task).is_on == this.is_on && ((TaskEntity) task).speed == this.speed && ((TaskEntity) task).aimT == this.aimT && ((TaskEntity) task).nowT == this.nowT;
         return false;
+    }
+
+    public int last(TaskEntity task) {
+        return task.last_update.compareTo(this.last_update);
     }
 
 }

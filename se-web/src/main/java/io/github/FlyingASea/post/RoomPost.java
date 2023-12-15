@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.Map;
 
 public class RoomPost {
-    public static int ClientControl(Map<String, String> data, String URL) throws IOException {
+    public static int ClientControl(Map<String, Object> data, String URL) throws IOException {
         HttpPost httpPost = new HttpPost(URL);
         httpPost.setEntity(new StringEntity(new Gson().toJson(data), ContentType.APPLICATION_JSON));
         if (WebUtil.fetchDataInJson(httpPost) == null) {

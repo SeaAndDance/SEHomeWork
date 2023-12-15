@@ -1,0 +1,16 @@
+<!-- mybatis-config.xml -->
+<configuration>
+    <environments default="development">
+        <environment id="development">
+            <transactionManager type="JDBC"/>
+            <dataSource type="POOLED">
+                <property name="driver" value="org.sqlite.JDBC"/>
+                <property name="url" value=" jdbc:sqlite:D:/IdeaProjects/2023-SE-HomeWork/se-client/src/main/resources/db/data.db"/>
+            </dataSource>
+        </environment>
+    </environments>
+
+    <mappers>
+        <mapper resource="mapper/DeviceMapper.xml"/>
+    </mappers>
+</configuration>

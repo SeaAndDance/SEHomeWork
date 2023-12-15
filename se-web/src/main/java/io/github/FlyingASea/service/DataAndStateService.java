@@ -39,9 +39,9 @@ public class DataAndStateService {
                 stateService.createState(data, (Timestamp) data.get("begin"));
             }
         } else {
-            stateService.changeState(data);
+            System.out.println("change State: " + stateService.changeState(data));
         }
-        dataService.createState(data);
+        System.out.println("change Data: " + dataService.createState(data));
     }
 
     public Map<String, Object> generateBill(String id) {

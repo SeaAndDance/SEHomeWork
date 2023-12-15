@@ -4,16 +4,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 
-import java.sql.Timestamp;
-
 @Data
 @NoArgsConstructor
 @Accessors(chain = true)
-public class DataEntity {
+public class DeviceEntity {
     private String id;
-    private String room;
-    private Double temperature;
-    private int wind_speed;
-    private int is_on;
-    private Timestamp last_update;
+    private String privateKey;
+    private String port;
 }

@@ -20,6 +20,18 @@ public class RandomUtils {
 
     private static final long EXPIRATION_TIME = 1000 * 60 * 60 * 24;
 
+    public static String Random(int length) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < length; i++)
+            builder.append(RANDOM_CHARS[random.nextInt(RANDOM_CHARS.length)]);
+        return builder.toString();
+    }
+
+    public static String Random() {
+        return Random(16);
+    }
+
+
     public static String randomString(int length, String id) {
         StringBuilder builder = new StringBuilder();
         Date expireDate = new Date(System.currentTimeMillis() + EXPIRATION_TIME);

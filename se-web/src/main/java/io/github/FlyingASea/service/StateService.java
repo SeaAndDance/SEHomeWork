@@ -80,19 +80,25 @@ public class StateService {
     }
 
     public boolean changeState(Map<String, Object> data) {
+
         Object id = data.get("id");
         Object temperature = data.get("temperature");
         Object wind_speed = data.get("wind_speed");
         Object is_on = data.get("is_on");
         Object last_update = data.get("last_update");
-        if (id == null || temperature == null || wind_speed == null || is_on == null || last_update == null)
+
+        if (id == null || temperature == null || wind_speed == null || is_on == null || last_update == null){
+            System.out.println("it has null!   ---------------------");
             return false;
-        if (id instanceof String && temperature instanceof Integer && wind_speed instanceof Integer &&
+        }
+        if (id instanceof String && temperature instanceof Double && wind_speed instanceof Integer &&
                 is_on instanceof Integer && last_update instanceof Timestamp) {
+            System.out.println(" yes! ");
             stateRepository.modifyState((String) id, (Double) temperature,
                     (int) wind_speed, (int) is_on, (Timestamp) last_update);
             return true;
         } else {
+            System.out.println("it class was  wrong !   ---------------------");
             return false;
         }
     }

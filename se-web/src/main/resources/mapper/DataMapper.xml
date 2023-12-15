@@ -3,6 +3,7 @@
 <mapper namespace="io.github.FlyingASea.dao.DataMapper">
 
     <resultMap id="RoomData" type="io.github.FlyingASea.entity.DataEntity">
+        <result column="id" jdbcType="INTEGER" property=""/>
         <result column="last_update" jdbcType="TIMESTAMP" property="last_update"/>
         <result column="room" jdbcType="VARCHAR" property="room"/>
         <result column="temperature" jdbcType="DOUBLE" property="temperature"/>
@@ -10,16 +11,17 @@
         <result column="is_on" jdbcType="INTEGER" property="is_on"/>
     </resultMap>
 
-    <select id="findDataById" resultType="io.github.FlyingASea.entity.DataEntity">
+    <select id="findDatasById" resultType="io.github.FlyingASea.entity.DataEntity">
         select *
         from Data
         where room = #{room}
     </select>
 
 
-    <insert id="createData">
-        insert into Data (last_update, room, temperature, wind_speed, is_on)
-        values (#{last_update}, #{room}, #{temperature}, #{wind_speed}, #{is_on})
+    <insert id="createData" parameterType="io.github.FlyingASea.entity.DataEntity" useGeneratedKeys="true" keyProperty="id">
+        insert into Data (id, last_update, room, temperature, wind_speed, is_on)
+        values (#{entity.id}, #{entity.last_update}, #{entity.room}, #{entity.temperature}, #{entity.wind_speed},
+                #{entity.is_on})
     </insert>
 
     <select id="selectDatasFromDate" resultType="io.github.FlyingASea.entity.DataEntity">

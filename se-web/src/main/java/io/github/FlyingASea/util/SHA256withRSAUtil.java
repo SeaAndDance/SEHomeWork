@@ -17,7 +17,7 @@ public class SHA256withRSAUtil {
     private static final String PRIVATE_KEY = "privateKey";
     public static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
 
-    private static Map<String, String> createRSAKeys() {
+    public static Map<String, String> createRSAKeys() {
         Map<String, String> keyPairMap = new HashMap<>();
         try {
             KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(KEY_ALGORITHM);

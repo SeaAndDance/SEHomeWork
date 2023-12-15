@@ -3,7 +3,7 @@
 <mapper namespace="io.github.FlyingASea.dao.RoomMapper">
 	<resultMap id="Room" type="io.github.FlyingASea.entity.RoomEntity">
 		<result column="id" jdbcType="VARCHAR" property="id"/>
-		<result column="public_key" jdbcType="VARCHAR" property="public_key"/>
+		<result column="privateKey" jdbcType="VARCHAR" property="public_key"/>
 		<result column="port" jdbcType="VARCHAR" property="port"/>
 	</resultMap>
 

@@ -6,6 +6,8 @@ import io.github.FlyingASea.entity.StateEntity;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -18,18 +20,29 @@ public class DataService {
     @Resource
     private DataMapper dataRepository;
 
-    public DataEntity getData(String id) {
-        return dataRepository.findDataById(id);
+    public DataEntity[] getData(String id) {
+        return dataRepository.findDatasById(id);
     }
 
 
     public void createState(String room, Double temperature, int wind_speed, int is_on, Timestamp last_update) {
-        dataRepository.createData(last_update, room, temperature, wind_speed, is_on);
+        DataEntity entity = new DataEntity();
+        entity.setRoom(room);
+        entity.setTemperature(temperature);
+        entity.setWind_speed(wind_speed);
+        entity.setIs_on(is_on);
+        entity.setLast_update(last_update);
+        dataRepository.createData(entity);
     }
 
     public void createState(StateEntity stateEntity) {
-        dataRepository.createData(stateEntity.getLast_update(), stateEntity.getId(), stateEntity.getTemperature()
-                , stateEntity.getWind_speed(), stateEntity.getIs_on());
+        DataEntity entity = new DataEntity();
+        entity.setRoom(stateEntity.getId());
+        entity.setTemperature(stateEntity.getTemperature());
+        entity.setWind_speed(stateEntity.getWind_speed());
+        entity.setIs_on(stateEntity.getIs_on());
+        entity.setLast_update(stateEntity.getLast_update());
+        dataRepository.createData(entity);
     }
 
     public boolean createState(Map<String, Object> data) {
@@ -40,10 +53,15 @@ public class DataService {
         Object last_update = data.get("last_update");
         if (room == null || temperature == null || wind_speed == null || is_on == null || last_update == null)
             return false;
-        if (room instanceof String && temperature instanceof Integer && wind_speed instanceof Integer &&
+        if (room instanceof String && temperature instanceof Double && wind_speed instanceof Integer &&
                 is_on instanceof Integer && last_update instanceof Timestamp) {
-            dataRepository.createData((Timestamp) last_update, (String) room,
-                    (Double) temperature, (int) wind_speed, (int) is_on);
+            DataEntity entity = new DataEntity();
+            entity.setRoom((String) room);
+            entity.setTemperature((Double) temperature);
+            entity.setWind_speed((Integer) wind_speed);
+            entity.setIs_on((Integer) is_on);
+            entity.setLast_update((Timestamp) last_update);
+            dataRepository.createData(entity);
             return true;
         } else {
             return false;
@@ -52,11 +70,18 @@ public class DataService {
 
     public Map<String, Object> generateBill(String id, StateEntity now) {
 
-        dataRepository.createData(now.getLast_update(), now.getId(),
-                now.getTemperature(), now.getWind_speed(), now.getIs_on());
+
+        DataEntity entity = new DataEntity();
+        entity.setRoom(now.getId());
+        entity.setTemperature(now.getTemperature());
+        entity.setWind_speed(now.getWind_speed());
+        entity.setIs_on(now.getIs_on());
+        entity.setLast_update(now.getLast_update());
+
+        dataRepository.createData(entity);
 
         DataEntity[] datas = dataRepository.selectDatasFromDate(id, now.getBegin());
-        long total_cost = 0L, total_time = 0L;
+        double total_cost = 0, total_time = 0;
         Map<String, Object> report = new HashMap<>();
         List<Map<String, Object>> items = new ArrayList<>();
 
@@ -68,8 +93,13 @@ public class DataService {
             int wind_speed = datas[i].getWind_speed();
             int is_on = datas[i].getIs_on();
 
+            System.out.println(datas[i]);
+
             long duration = Math.abs(Duration.between(end.toInstant(), start.toInstant()).getSeconds());
-            long cost = (long) (3 * temperature * wind_speed * is_on * duration / 600);
+            double cost = (double) (wind_speed * is_on * duration) / (30);
+
+            System.out.println("cost is : " + cost);
+            ;
 
             total_time += duration;
             total_cost += cost;
