@@ -35,13 +35,14 @@ public class DataService {
         dataRepository.createData(entity);
     }
 
-    public void createState(StateEntity stateEntity) {
+    public void createData(StateEntity now) {
         DataEntity entity = new DataEntity();
-        entity.setRoom(stateEntity.getId());
-        entity.setTemperature(stateEntity.getTemperature());
-        entity.setWind_speed(stateEntity.getWind_speed());
-        entity.setIs_on(stateEntity.getIs_on());
-        entity.setLast_update(stateEntity.getLast_update());
+        entity.setRoom(now.getId());
+        entity.setTemperature(now.getTemperature());
+        entity.setWind_speed(now.getWind_speed());
+        entity.setIs_on(now.getIs_on());
+        entity.setLast_update(now.getLast_update());
+
         dataRepository.createData(entity);
     }
 
@@ -70,15 +71,7 @@ public class DataService {
 
     public Map<String, Object> generateBill(String id, StateEntity now) {
 
-
-        DataEntity entity = new DataEntity();
-        entity.setRoom(now.getId());
-        entity.setTemperature(now.getTemperature());
-        entity.setWind_speed(now.getWind_speed());
-        entity.setIs_on(now.getIs_on());
-        entity.setLast_update(now.getLast_update());
-
-        dataRepository.createData(entity);
+        createData(now);
 
         DataEntity[] datas = dataRepository.selectDatasFromDate(id, now.getBegin());
         double total_cost = 0, total_time = 0;

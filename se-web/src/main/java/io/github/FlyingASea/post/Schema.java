@@ -20,12 +20,10 @@ public class Schema {
     public static Queue<TaskEntity> waitingQueue = new PriorityQueue<>(Comparator.comparing(TaskEntity::getStartTime));
     public static Queue<TaskEntity> serviceQueue = new PriorityQueue<>(Comparator.comparing(TaskEntity::getStartTime));
     public static Queue<TaskEntity> closeQueue = new LinkedList<>();
-
     public static Map<String, TaskEntity> map = new HashMap<>();
-
     public static Map<String, Queue<TaskEntity>> history = new HashMap<>();
-
     public static Map<String, Timestamp> START = new HashMap<>();
+    public static Queue<String> endQueue = new ArrayDeque<>();
     @Resource
     private DataAndStateService dataAndStateServices;
     @Resource
@@ -87,7 +85,6 @@ public class Schema {
             ));
         }
 
-
         return entity;
     }
 
@@ -116,24 +113,29 @@ public class Schema {
                 entity.last_update = new Timestamp(System.currentTimeMillis());
                 System.out.println("come to end: " + entity);
                 Queue<TaskEntity> entities = history.get(entity.id);
-                System.out.println(" Tasks history: " + entities);
-                Timestamp start = new Timestamp(System.currentTimeMillis());
-                if (START.get(entity.id) != null) {
-                    start = START.get(entity.id);
-                }
-                for (TaskEntity i : entities) {
-                    System.out.println("will to change the Task" + i);
+                endQueue.add(entity.id);
+                if (entities != null) {
+                    entities.add(entity);
+                    System.out.println(" Tasks history: " + entities);
+                    Timestamp start = new Timestamp(System.currentTimeMillis());
 
-                    dataAndStateService.changeOrCreateStateAndData(Map.of(
-                            "id", i.id,
-                            "temperature", i.nowT,
-                            "wind_speed", i.speed,
-                            "is_on", i.is_on,
-                            "last_update", i.last_update,
-                            "begin", start
-                    ));
-                }
+                    if (START.get(entity.id) != null) {
+                        start = START.get(entity.id);
+                    }
 
+                    for (TaskEntity i : entities) {
+                        System.out.println("will to change the Task" + i);
+
+                        dataAndStateService.changeOrCreateStateAndData(Map.of(
+                                "id", i.id,
+                                "temperature", i.nowT,
+                                "wind_speed", i.speed,
+                                "is_on", i.is_on,
+                                "last_update", i.last_update,
+                                "begin", start
+                        ));
+                    }
+                }
             }
         }
     }
@@ -170,6 +172,95 @@ public class Schema {
 
 
     public void judge() {
+        handleClose();
+        handleReady();
+        handleWait();
+        handleService();
+    }
+
+    private void handleService() {
+        List<TaskEntity> serviceExit = new ArrayList<>();
+        if (!serviceQueue.isEmpty()) {
+            for (TaskEntity i : serviceQueue) {
+                if (i.is_on == 0) {
+                    serviceExit.add(i);
+                    i.startTime = System.currentTimeMillis();
+                    closeQueue.add(i);
+                }
+
+                if (i.nowT > i.aimT) {
+                    if (i.nowT - 0.5 < i.aimT) {
+                        i.nowT = i.aimT;
+                    } else {
+                        i.nowT -= 0.5;
+                    }
+                }
+
+                addToHistory(i);
+            }
+        }
+
+        if (!serviceExit.isEmpty())
+            for (TaskEntity i : serviceExit)
+                serviceQueue.remove(i);
+    }
+
+    private void handleWait() {
+        List<TaskEntity> waitingExit = new ArrayList<>();
+
+        if (!waitingQueue.isEmpty()) {
+            for (TaskEntity i : waitingQueue) {
+                if (i.is_on == 0) {
+                    waitingExit.add(i);
+                    i.startTime = System.currentTimeMillis();
+                    closeQueue.add(i);
+
+                }
+
+                if (i.nowT < i.roomTemperature) {
+                    if (i.nowT + 0.5 > i.roomTemperature) {
+                        i.nowT = i.roomTemperature;
+                    } else {
+                        i.nowT += 0.5;
+                    }
+                }
+
+                addToHistory(i);
+            }
+        }
+
+        if (!waitingExit.isEmpty())
+            for (TaskEntity i : waitingExit)
+                waitingQueue.remove(i);
+    }
+
+    private void handleReady() {
+        List<TaskEntity> readyExit = new ArrayList<>();
+
+        if (!readyQueue.isEmpty()) {
+            for (TaskEntity i : readyQueue) {
+                if (i.is_on == 0) {
+                    readyExit.add(i);
+                    i.startTime = System.currentTimeMillis();
+                    closeQueue.add(i);
+                }
+
+                if (i.nowT < i.roomTemperature) {
+                    if (i.nowT + 0.5 > i.roomTemperature) {
+                        i.nowT = i.roomTemperature;
+                    } else {
+                        i.nowT += 0.5;
+                    }
+                    addToHistory(i);
+                }
+            }
+        }
+        if (!readyExit.isEmpty())
+            for (TaskEntity i : readyExit)
+                readyQueue.remove(i);
+    }
+
+    private void handleClose() {
         List<TaskEntity> exit = new ArrayList<>();
         for (TaskEntity i : closeQueue) {
             if (i.is_on == 1) {
@@ -192,109 +283,19 @@ public class Schema {
                         i.nowT += 0.5;
                     }
                 }
-                if (history.get(i.id) != null) {
-                    history.get(i.id).add(new TaskEntity(i));
-                } else {
-                    Queue<TaskEntity> list = new PriorityQueue<>(TaskEntity::last);
-                    list.add(i);
-                    history.put(i.id, list);
-                }
+                addToHistory(i);
             }
         }
+    }
 
-        List<TaskEntity> readyExit = new ArrayList<>();
-
-        if (!readyQueue.isEmpty()) {
-            for (TaskEntity i : readyQueue) {
-                if (i.is_on == 0) {
-                    readyExit.add(i);
-                    i.startTime = System.currentTimeMillis();
-                    closeQueue.add(i);
-                }
-
-                if (i.nowT < i.roomTemperature) {
-                    if (i.nowT + 0.5 > i.roomTemperature) {
-                        i.nowT = i.roomTemperature;
-                    } else {
-                        i.nowT += 0.5;
-                    }
-                    if (history.get(i.id) != null) {
-                        history.get(i.id).add(new TaskEntity(i));
-                    } else {
-                        Queue<TaskEntity> list = new PriorityQueue<>(TaskEntity::last);
-                        list.add(i);
-                        history.put(i.id, list);
-                    }
-                }
-            }
+    private void addToHistory(TaskEntity i) {
+        if (history.get(i.id) != null) {
+            history.get(i.id).add(new TaskEntity(i));
+        } else {
+            Queue<TaskEntity> list = new PriorityQueue<>(TaskEntity::last);
+            list.add(i);
+            history.put(i.id, list);
         }
-        if (!readyExit.isEmpty())
-            for (TaskEntity i : readyExit)
-                readyQueue.remove(i);
-
-        List<TaskEntity> waitingExit = new ArrayList<>();
-
-        if (!waitingQueue.isEmpty()) {
-            for (TaskEntity i : waitingQueue) {
-                if (i.is_on == 0) {
-                    waitingExit.add(i);
-                    i.startTime = System.currentTimeMillis();
-                    closeQueue.add(i);
-
-                }
-
-                if (i.nowT < i.roomTemperature) {
-                    if (i.nowT + 0.5 > i.roomTemperature) {
-                        i.nowT = i.roomTemperature;
-                    } else {
-                        i.nowT += 0.5;
-                    }
-                }
-
-                if (history.get(i.id) != null) {
-                    history.get(i.id).add(new TaskEntity(i));
-                } else {
-                    Queue<TaskEntity> list = new PriorityQueue<>(TaskEntity::last);
-                    list.add(i);
-                    history.put(i.id, list);
-                }
-            }
-        }
-        if (!waitingExit.isEmpty())
-            for (TaskEntity i : waitingExit)
-                waitingQueue.remove(i);
-
-        List<TaskEntity> serviceExit = new ArrayList<>();
-        if (!serviceQueue.isEmpty()) {
-            for (TaskEntity i : serviceQueue) {
-                if (i.is_on == 0) {
-                    serviceExit.add(i);
-                    i.startTime = System.currentTimeMillis();
-                    closeQueue.add(i);
-                }
-
-                if (i.nowT > i.aimT) {
-                    if (i.nowT - 0.5 < i.aimT) {
-                        i.nowT = i.aimT;
-                    } else {
-                        i.nowT -= 0.5;
-                    }
-                }
-
-                if (history.get(i.id) != null) {
-                    history.get(i.id).add(new TaskEntity(i));
-                } else {
-                    Queue<TaskEntity> list = new PriorityQueue<>(TaskEntity::last);
-                    list.add(i);
-                    history.put(i.id, list);
-                }
-            }
-        }
-
-        if (!serviceExit.isEmpty())
-            for (TaskEntity i : serviceExit)
-                serviceQueue.remove(i);
-
     }
 
     public static void post() throws IOException {
@@ -325,57 +326,104 @@ public class Schema {
 
     @Scheduled(cron = "0/10 * * * * ?")
     public void schema() throws IOException {
-        if (!readyQueue.isEmpty() || !waitingQueue.isEmpty() || !serviceQueue.isEmpty()
-        ) {
+        if (!readyQueue.isEmpty() || !waitingQueue.isEmpty() || !serviceQueue.isEmpty()) {
             judge();
             if (!readyQueue.isEmpty()) {
-                TaskEntity longestTask = readyQueue.peek();
-                long elapsedTime = System.currentTimeMillis() - longestTask.getStartTime();
-                if (elapsedTime >= 10 * 1000) {
-                    TaskEntity task = readyQueue.poll();
-                    waitingQueue.offer(task);
-                    if (task != null) {
-                        System.out.println("Task scheduled from ready queue to waiting queue: " + task.id);
-                    }
-                }
+                readyToWait();
             }
             if (!waitingQueue.isEmpty()) {
-                TaskEntity first = waitingQueue.peek();
-                if (serviceQueue.size() == 3) {
-                    TaskEntity last = serviceQueue.peek();
-                    System.out.println("first id: " + first.id + " count " + first.count());
-                    System.out.println("last id: " + last.id + " count " + last.count());
-                    if (first.compareTo(last) >= 0) {
-                        last.startTime = System.currentTimeMillis();
-                        readyQueue.add(serviceQueue.poll());
-                        first.startTime = System.currentTimeMillis();
-                        serviceQueue.add(waitingQueue.poll());
-                    }
-                } else {
-                    first.startTime = System.currentTimeMillis();
-                    serviceQueue.add(waitingQueue.poll());
-                }
+                waitToService();
             } else {
-                if (serviceQueue.size() < 3) {
-                    int size = 3 - serviceQueue.size();
-                    for (int i = 0; i < size; i++) {
-                        TaskEntity last = readyQueue.poll();
-                        if (last != null) {
-                            last.startTime = System.currentTimeMillis();
-                            serviceQueue.add(last);
-                        }
-                    }
-                }
+                fillService();
             }
+            addToDB();
             post();
             print();
         } else {
             if (closeQueue.size() == 5) {
-                postBill();
+                addToDB();
                 closeQueue.clear();
             }
         }
+    }
 
+    private void addToDB() {
+        if (!history.isEmpty()) {
+            for (Map.Entry<String, Queue<TaskEntity>> i : history.entrySet()) {
+                if (!i.getValue().isEmpty()) {
+                    for (TaskEntity j : i.getValue()) {
+                        System.out.println("Tasks history: " + j);
+                        Timestamp start = new Timestamp(System.currentTimeMillis());
+
+                        if (START.get(j.id) != null) {
+                            start = START.get(j.id);
+                        }
+
+                        System.out.println("will to change the Task" + i);
+
+                        dataAndStateService.changeOrCreateStateAndData(Map.of(
+                                "id", j.id,
+                                "temperature", j.nowT,
+                                "wind_speed", j.speed,
+                                "is_on", j.is_on,
+                                "last_update", j.last_update,
+                                "begin", start
+                        ));
+                    }
+                    i.getValue().clear();
+                }
+            }
+        }
+    }
+
+    private static void readyToWait() {
+        TaskEntity longestTask = readyQueue.peek();
+        long elapsedTime = 0;
+        if (longestTask != null) {
+            elapsedTime = System.currentTimeMillis() - longestTask.getStartTime();
+        }
+        if (elapsedTime >= 10 * 1000) {
+            TaskEntity task = readyQueue.poll();
+            waitingQueue.offer(task);
+            if (task != null) {
+                System.out.println("Task scheduled from ready queue to waiting queue: " + task.id);
+            }
+        }
+    }
+
+    private static void waitToService() {
+        TaskEntity first = waitingQueue.peek();
+        if (serviceQueue.size() == 3) {
+            TaskEntity last = serviceQueue.peek();
+            if (first != null) {
+                System.out.println("first id: " + first.id + " count " + first.count());
+            }
+            System.out.println("last id: " + last.id + " count " + last.count());
+            if (first != null && first.compareTo(last) >= 0) {
+                last.startTime = System.currentTimeMillis();
+                readyQueue.add(serviceQueue.poll());
+                first.startTime = System.currentTimeMillis();
+                serviceQueue.add(waitingQueue.poll());
+            }
+        } else {
+            if (first != null) {
+                first.startTime = System.currentTimeMillis();
+                serviceQueue.add(waitingQueue.poll());
+            }
+        }
+    }
+
+    private static void fillService() {
+        if (serviceQueue.size() < 3) {
+            int size = 3 - serviceQueue.size();
+            for (int i = 0; i < size; i++) {
+                TaskEntity last = readyQueue.poll();
+                if (last != null) {
+                    last.startTime = System.currentTimeMillis();
+                    serviceQueue.add(last);
+                }
+            }
+        }
     }
 
 

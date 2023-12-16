@@ -24,7 +24,7 @@ public class DataAndStateService {
         stateService.changeState(type, data, past.getId(), last_update);
         StateEntity now = stateService.getState(id);
         System.out.println("now State: " + now.getLast_update());
-        dataService.createState(now);
+        dataService.createData(now);
         return true;
     }
 
