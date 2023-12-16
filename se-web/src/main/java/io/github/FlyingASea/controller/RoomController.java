@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/room")
-@CrossOrigin
 public class RoomController {
 
     @Resource
@@ -75,12 +75,29 @@ public class RoomController {
     @NeedAuthenticated
     @PostMapping("/all")
     public ResponseEntity<Map<String, Object>> getHistory(@RequestBody Map<String, String> data) {
-        String id = data.get("room");
-        if (id == null)
+
+        String id = null;
+        Timestamp timestamp = null;
+        if (data != null) {
+            id = data.get("room");
+        }
+        if (id == null) {
             throw new ApiException(Errors.INVALID_DATA_FORMAT);
+        }
         if (stateService.getState(id) == null)
             throw new ApiException(Errors.ROOM_IS_NOT_EXISTS);
-        Map<String, Object> result = dataAndStateService.getHistory(id);
+        if (data.get("begin") != null) {
+            timestamp = Timestamp.valueOf(LocalDateTime.parse(data.get("begin"), DateTimeFormatter.ISO_DATE_TIME));
+        }
+        Map<String, Object> result = dataAndStateService.getHistory(id, timestamp);
         return ResponseEntity.ok(result);
     }
+
+    @NeedAuthenticated
+    @GetMapping("/all")
+    public ResponseEntity<Map<String, Object>> getAllHistory() {
+        Map<String, Object> result = dataAndStateService.getAllHistory();
+        return ResponseEntity.ok(result);
+    }
+
 }

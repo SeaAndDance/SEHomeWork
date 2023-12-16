@@ -69,19 +69,43 @@ public class DataService {
         }
     }
 
+    public Map<String, Object> generateHistory(String id, Timestamp begin) {
+        if (begin == null) {
+            DataEntity[] datas = getData(id);
+            return getBill(datas);
+        }
+        DataEntity[] datas = dataRepository.selectDatasFromDate(id, begin);
+        return getBill(datas);
+
+    }
+
     public Map<String, Object> generateBill(String id, StateEntity now) {
-
         createData(now);
-
         DataEntity[] datas = dataRepository.selectDatasFromDate(id, now.getBegin());
+        return getBill(datas);
+    }
+
+    public Map<String, Object> generateAllHistory() {
+        DataEntity[] datas = dataRepository.getAllData();
+        return getBill(datas);
+    }
+
+    private Map<String, Object> getBill(DataEntity[] datas) {
         double total_cost = 0, total_time = 0;
         Map<String, Object> report = new HashMap<>();
         List<Map<String, Object>> items = new ArrayList<>();
+        Timestamp total_start = new Timestamp(System.currentTimeMillis());
+        Timestamp total_end = new Timestamp(System.currentTimeMillis());
 
         for (int i = 0; i < datas.length - 1; i++) {
-
             Timestamp start = datas[i].getLast_update();
             Timestamp end = datas[i + 1].getLast_update();
+            if (total_start.compareTo(start) > 0) {
+                total_start = start;
+            }
+            if (total_end.compareTo(start) < 0) {
+                total_end = start;
+            }
             Double temperature = datas[i].getTemperature();
             int wind_speed = datas[i].getWind_speed();
             int is_on = datas[i].getIs_on();
@@ -92,12 +116,12 @@ public class DataService {
             double cost = (double) (wind_speed * is_on * duration) / (30);
 
             System.out.println("cost is : " + cost);
-            ;
 
             total_time += duration;
             total_cost += cost;
 
             Map<String, Object> temp = new HashMap<>();
+            temp.put("room", datas[i].getRoom());
             temp.put("start_time", start);
             temp.put("end_time", end);
             temp.put("temperature", temperature);
@@ -110,6 +134,8 @@ public class DataService {
 
         report.put("total_cost", total_cost);
         report.put("total_time", total_time);
+        report.put("start", total_start);
+        report.put("end", total_end);
         report.put("details", items.toArray());
         return report;
     }

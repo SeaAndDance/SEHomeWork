@@ -32,5 +32,8 @@
         order by last_update desc
     </select>
 
+    <select id="getAllData" resultType="io.github.FlyingASea.entity.DataEntity">
+        select * from Data
+    </select>
 
 </mapper>

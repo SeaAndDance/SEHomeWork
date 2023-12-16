@@ -15,6 +15,9 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 10MB
+  security:
+    basic:
+      enabled: false
 
 server:
   error:
@@ -34,7 +37,6 @@ mybatis:
 logging:
   level:
     io.github.nickid2018.ipgs.dao: debug
-
 security:
   basic:
     enabled: false

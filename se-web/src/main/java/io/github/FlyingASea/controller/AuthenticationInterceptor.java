@@ -43,7 +43,7 @@ public class AuthenticationInterceptor implements HandlerInterceptor {
 
         Cookie cookie = getCookie(request, "session");
         String session;
-        boolean checked;
+        boolean checked = true;
 
         if (cookie == null) {
             checked = false;

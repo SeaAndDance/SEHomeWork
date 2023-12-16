@@ -48,8 +48,12 @@ public class DataAndStateService {
         return stateService.generateBill(id);
     }
 
-    public Map<String, Object> getHistory(String id) {
-        return dataService.generateBill(id, stateService.getState(id));
+    public Map<String,Object> getAllHistory(){
+        return dataService.generateAllHistory();
+    }
+
+    public Map<String, Object> getHistory(String id, Timestamp begin) {
+        return dataService.generateHistory(id, begin);
     }
 
 }

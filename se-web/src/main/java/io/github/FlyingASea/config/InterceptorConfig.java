@@ -15,9 +15,11 @@ public class InterceptorConfig implements WebMvcConfigurer {
         registry.addInterceptor(getAuthenticationInterceptor()).addPathPatterns("/api/**");
     }
 
+
     @Bean
     public AuthenticationInterceptor getAuthenticationInterceptor() {
         return new AuthenticationInterceptor();
     }
+
 }
 

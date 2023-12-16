@@ -14,7 +14,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin
 public class UserController {
     @Resource
     private UserService userService;
@@ -45,15 +44,16 @@ public class UserController {
         cookie.setSecure(true);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
-        response.addCookie(cookie);
         return ResponseEntity.ok().build();
     }
+
+
 
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> data, HttpServletResponse response) {
         String id = data.get("username");
-        String password = data.get("password");
+            String password = data.get("password");
         if (id == null || password == null)
             throw new ApiException(Errors.INVALID_DATA_FORMAT);
         if (authenticationService.isInvalidID(id))
@@ -70,7 +70,6 @@ public class UserController {
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         response.addCookie(cookie);
-
         return ResponseEntity.ok(Map.of(
                 "username", id
         ));

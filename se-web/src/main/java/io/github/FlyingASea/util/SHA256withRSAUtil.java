@@ -12,7 +12,7 @@ import java.util.Map;
 public class SHA256withRSAUtil {
 
     private static final String KEY_ALGORITHM = "RSA";
-    private static final int KEY_SIZE = 1024;
+    private static final int KEY_SIZE = 4096;
     private static final String PUBLIC_KEY = "publicKey";
     private static final String PRIVATE_KEY = "privateKey";
     public static final String SIGNATURE_ALGORITHM = "SHA256withRSA";
